@@ -1,0 +1,10 @@
+my_token = "f3d9641fc869f1849c30a7565e0dad56789872fa67efd6944eaec29ceb47a47b6c3b64e061e9c963d7411875a12c7a951c29a4c5ac0fba9c450f9905a810267a"
+my_host= "localhost"
+my_user = "root"
+my_password = "votre mot de passe"
+my_db = "medijutsu"
+my_CURSORCLASS = ""
+my_secret_key = "59e9b2a075076d2d13e75713d58b3a87911a81a3ff702f3600bba09959554b14ddcc6d0c1092b0dff85da517492bef2cdf43f73e59eac5869a46c41c83571b01"
+
+my_email = "elogegomina@gmail.com"
+my_password_generer = "jzhqsgnrbbhvopqg "

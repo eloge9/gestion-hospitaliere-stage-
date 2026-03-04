@@ -1,0 +1,349 @@
+{% extends "doctor/base_doctor.html" %}
+
+{% block content %}
+
+<!-- App container starts -->
+<div class="app-container">
+
+  <!-- App hero header starts -->
+  <div class="app-hero-header d-flex align-items-center">
+
+    <!-- Breadcrumb starts -->
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+        <a href="{{url_for('index_doctor')}}">Doctor</a>
+      </li>
+      <li class="breadcrumb-item text-primary" aria-current="page">
+        Liste des Docteurs
+      </li>
+    </ol>
+    <!-- Breadcrumb ends -->
+
+    <!-- Sales stats starts -->
+    <div class="ms-auto d-lg-flex d-none flex-row">
+      <div class="d-flex flex-row gap-1 day-sorting">
+        <button class="btn btn-sm btn-primary">Ajourd'hui</button>
+        <button class="btn btn-sm">7 jours</button>
+        <button class="btn btn-sm">2 semaines</button>
+        <button class="btn btn-sm">1 mois</button>
+        <button class="btn btn-sm">3 mois</button>
+        <button class="btn btn-sm">6 mois</button>
+        <button class="btn btn-sm">1 années</button>
+      </div>
+    </div>
+    <!-- Sales stats ends -->
+
+  </div>
+  <!-- App Hero header ends -->
+
+  <!-- App body starts -->
+  <div class="app-body">
+
+    <!-- Row starts -->
+    <div class="row gx-3">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+
+            <!-- Table starts -->
+            <div class="table-responsive">
+              <table id="basicExample" class="table truncate m-0 align-middle">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nom Docteur</th>
+                    <th>Désignation</th>
+                    <th class="text-center">Dim</th>
+                    <th class="text-center">Lun</th>
+                    <th class="text-center">Mar</th>
+                    <th class="text-center">Mer</th>
+                    <th class="text-center">Jeu</th>
+                    <th class="text-center">Ven</th>
+                    <th class="text-center">Sam</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#0008</td>
+                    <td>
+                      <img src="{{url_for('static', filename='/images/user.png')}}"
+                        class="img-shadow img-2x rounded-5 me-1" alt="Medical Admin Template">
+                      Allan Stuart
+                    </td>
+                    <td>Oncologist</td>
+                    <td class="text-center text-danger">NA</td>
+                    <td class="text-center">9AM-2PM</td>
+                    <td class="text-center">9AM-2PM</td>
+                    <td class="text-center">9AM-2PM</td>
+                    <td class="text-center">9AM-2PM</td>
+                    <td class="text-center">9AM-2PM</td>
+                    <td class="text-center">9AM-2PM</td>
+                    <td>
+                      <div class="d-inline-flex gap-1">
+                        <a href="{{url_for('profile_doctor')}}" class="btn btn-outline-info btn-sm"
+                          data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir profile">
+                          <i class="ri-eye-line"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#0021</td>
+                    <td>
+                      <img src="{{url_for('static', filename='/images/user1.png')}}"
+                        class="img-shadow img-2x rounded-5 me-1" alt="Medical Admin Template">
+                      Smith White
+                    </td>
+                    <td>Neurology</td>
+                    <td class="text-center text-danger">NA</td>
+                    <td class="text-center">3PM-5PM</td>
+                    <td class="text-center">3PM-5PM</td>
+                    <td class="text-center">3PM-5PM</td>
+                    <td class="text-center">3PM-5PM</td>
+                    <td class="text-center">3PM-5PM</td>
+                    <td class="text-center">3PM-5PM</td>
+                    <td>
+                      <div class="d-inline-flex gap-1">
+                        <a href="{{url_for('profile_doctor')}}" class="btn btn-outline-info btn-sm"
+                          data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir profile">
+                          <i class="ri-eye-line"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#0026</td>
+                    <td>
+                      <img src="{{url_for('static', filename='/images/user2.png')}}"
+                        class="img-shadow img-2x rounded-5 me-1" alt="Medical Admin Template">
+                      Gilbert Sandoval
+                    </td>
+                    <td>Cardiologist</td>
+                    <td class="text-center text-danger">NA</td>
+                    <td class="text-center">5PM-9PM</td>
+                    <td class="text-center">5PM-9PM</td>
+                    <td class="text-center">5PM-9PM</td>
+                    <td class="text-center">5PM-9PM</td>
+                    <td class="text-center">5PM-9PM</td>
+                    <td class="text-center">5PM-9PM</td>
+                    <td>
+                      <div class="d-inline-flex gap-1">
+                        <a href="{{url_for('profile_doctor')}}" class="btn btn-outline-info btn-sm"
+                          data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir profile">
+                          <i class="ri-eye-line"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#0039</td>
+                    <td>
+                      <img src="{{url_for('static', filename='/images/user3.png')}}"
+                        class="img-shadow img-2x rounded-5 me-1" alt="Medical Admin Template">
+                      Bernardo James
+                    </td>
+                    <td>Clinical Doctor</td>
+                    <td class="text-center text-danger">NA</td>
+                    <td class="text-center">7AM-9AM</td>
+                    <td class="text-center">7AM-9AM</td>
+                    <td class="text-center">7AM-9AM</td>
+                    <td class="text-center">7AM-9AM</td>
+                    <td class="text-center">7AM-9AM</td>
+                    <td class="text-center">7AM-9AM</td>
+                    <td>
+                      <div class="d-inline-flex gap-1">
+                        <a href="{{url_for('profile_doctor')}}" class="btn btn-outline-info btn-sm"
+                          data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir profile">
+                          <i class="ri-eye-line"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#0044</td>
+                    <td>
+                      <img src="{{url_for('static', filename='/images/user4.png')}}"
+                        class="img-shadow img-2x rounded-5 me-1" alt="Medical Admin Template">
+                      Ronald Sullivan
+                    </td>
+                    <td>Radiologist</td>
+                    <td class="text-center text-danger">NA</td>
+                    <td class="text-center">3PM-9PM</td>
+                    <td class="text-center">3PM-9PM</td>
+                    <td class="text-center">3PM-9PM</td>
+                    <td class="text-center">3PM-9PM</td>
+                    <td class="text-center">3PM-9PM</td>
+                    <td class="text-center">3PM-9PM</td>
+                    <td>
+                      <div class="d-inline-flex gap-1">
+                        <a href="{{url_for('profile_doctor')}}" class="btn btn-outline-info btn-sm"
+                          data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir profile">
+                          <i class="ri-eye-line"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#0083</td>
+                    <td>
+                      <img src="{{url_for('static', filename='/images/user5.png')}}"
+                        class="img-shadow img-2x rounded-5 me-1" alt="Medical Admin Template">
+                      Amelia Bruklin
+                    </td>
+                    <td>Neurologist</td>
+                    <td class="text-center text-danger">NA</td>
+                    <td class="text-center">6PM-8PM</td>
+                    <td class="text-center">6PM-8PM</td>
+                    <td class="text-center">6PM-8PM</td>
+                    <td class="text-center">6PM-8PM</td>
+                    <td class="text-center">6PM-8PM</td>
+                    <td class="text-center">6PM-8PM</td>
+                    <td>
+                      <div class="d-inline-flex gap-1">
+                        <a href="{{url_for('profile_doctor')}}" class="btn btn-outline-info btn-sm"
+                          data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir profile">
+                          <i class="ri-eye-line"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#0067</td>
+                    <td>
+                      <img src="{{url_for('static', filename='/images/user2.png')}}"
+                        class="img-shadow img-2x rounded-5 me-1" alt="Medical Admin Template">
+                      Bshton Cozei
+                    </td>
+                    <td>Pediatrics</td>
+                    <td class="text-center text-danger">NA</td>
+                    <td class="text-center">4PM-7PM</td>
+                    <td class="text-center">4PM-7PM</td>
+                    <td class="text-center">4PM-7PM</td>
+                    <td class="text-center">4PM-7PM</td>
+                    <td class="text-center">4PM-7PM</td>
+                    <td class="text-center">4PM-7PM</td>
+                    <td>
+                      <div class="d-inline-flex gap-1">
+                        <a href="{{url_for('profile_doctor')}}" class="btn btn-outline-info btn-sm"
+                          data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir profile">
+                          <i class="ri-eye-line"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#0048</td>
+                    <td>
+                      <img src="{{url_for('static', filename='/images/user3.png')}}"
+                        class="img-shadow img-2x rounded-5 me-1" alt="Medical Admin Template">
+                      George Bailey
+                    </td>
+                    <td>Pediatrics</td>
+                    <td class="text-center text-danger">NA</td>
+                    <td class="text-center">5PM-8PM</td>
+                    <td class="text-center">5PM-8PM</td>
+                    <td class="text-center">5PM-8PM</td>
+                    <td class="text-center">5PM-8PM</td>
+                    <td class="text-center">5PM-8PM</td>
+                    <td class="text-center">5PM-8PM</td>
+                    <td>
+                      <div class="d-inline-flex gap-1">
+                        <a href="{{url_for('profile_doctor')}}" class="btn btn-outline-info btn-sm"
+                          data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir profile">
+                          <i class="ri-eye-line"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#0058</td>
+                    <td>
+                      <img src="{{url_for('static', filename='/images/user4.png')}}"
+                        class="img-shadow img-2x rounded-5 me-1" alt="Medical Admin Template">
+                      Andrea Lalema
+                    </td>
+                    <td>Dentist</td>
+                    <td class="text-center text-danger">NA</td>
+                    <td class="text-center">8AM-4PM</td>
+                    <td class="text-center">8AM-4PM</td>
+                    <td class="text-center">8AM-4PM</td>
+                    <td class="text-center">8AM-4PM</td>
+                    <td class="text-center">8AM-4PM</td>
+                    <td class="text-center">8AM-4PM</td>
+                    <td>
+                      <div class="d-inline-flex gap-1">
+                        <a href="{{url_for('profile_doctor')}}" class="btn btn-outline-info btn-sm"
+                          data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir profile">
+                          <i class="ri-eye-line"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#0047</td>
+                    <td>
+                      <img src="{{url_for('static', filename='/images/user3.png')}}"
+                        class="img-shadow img-2x rounded-5 me-1" alt="Medical Admin Template">
+                      Taylor Melon
+                    </td>
+                    <td>Therapist</td>
+                    <td class="text-center text-danger">NA</td>
+                    <td class="text-center">9AM-3PM</td>
+                    <td class="text-center">9AM-3PM</td>
+                    <td class="text-center">9AM-3PM</td>
+                    <td class="text-center">9AM-3PM</td>
+                    <td class="text-center">9AM-3PM</td>
+                    <td class="text-center">9AM-3PM</td>
+                    <td>
+                      <div class="d-inline-flex gap-1">
+                        <a href="{{url_for('profile_doctor')}}" class="btn btn-outline-info btn-sm"
+                          data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir profile">
+                          <i class="ri-eye-line"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>#0082</td>
+                    <td>
+                      <img src="{{url_for('static', filename='/images/user.png')}}"
+                        class="img-shadow img-2x rounded-5 me-1" alt="Medical Admin Template">
+                      Meera Gill
+                    </td>
+                    <td>Gynecologist</td>
+                    <td class="text-center text-danger">NA</td>
+                    <td class="text-center">5PM-8PM</td>
+                    <td class="text-center">5PM-8PM</td>
+                    <td class="text-center">5PM-8PM</td>
+                    <td class="text-center">5PM-8PM</td>
+                    <td class="text-center">5PM-8PM</td>
+                    <td class="text-center">5PM-8PM</td>
+                    <td>
+                      <div class="d-inline-flex gap-1">
+                        <a href="{{url_for('profile_doctor')}}" class="btn btn-outline-info btn-sm"
+                          data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir profile">
+                          <i class="ri-eye-line"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- Table ends -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Row ends -->
+
+  </div>
+  <!-- App body ends -->
+
+</div>
+<!-- App container ends -->
+
+{% endblock%}

@@ -1,0 +1,205 @@
+<nav id="sidebar" class="sidebar-wrapper">
+
+  <!-- Sidebar profile starts -->
+  <div class="sidebar-profile">
+    <img src="{{ url_for('static', filename='images/user6.png') }}" class="img-shadow img-3x me-3 rounded-5"
+      alt="Hospital Admin Templates">
+
+    <div class="m-0">
+      <h5 class="mb-1 profile-name text-nowrap text-truncate">Eloge GOMINA</h5>
+      <p class="m-0 small profile-name text-nowrap text-truncate">Dept Médecin</p>
+    </div>
+  </div>
+  <!-- Sidebar profile ends -->
+
+  <!-- Sidebar menu starts -->
+  <div class="sidebarMenuScroll">
+    <ul class="sidebar-menu">
+      <li class="active current-page">
+        <a href="dashboard3.html">
+          <i class="ri-home-5-line"></i>
+          <span class="menu-text">Tableau de bord</span>
+        </a>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-stethoscope-line"></i>
+          <span class="menu-text">Docteur</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="{{url_for('liste_doctor')}}">Liste des médecins</a>
+          </li>
+          <li>
+            <a href="{{url_for('profile_doctor')}}">Profile</a>
+          </li>
+          <li>
+            <a href="{{url_for('modifier_profile_doctor')}}">Modifier profile</a>
+          </li>
+        </ul>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-heart-pulse-line"></i>
+          <span class="menu-text">Patients</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="{{url_for('liste_patient_doctor')}}">Liste Patient</a>
+          </li>
+          <li>
+            <a href="{{url_for('add_patient_doctor')}}">Ajouter Patient</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="{{url_for('consultation_doctor')}}">
+          <i class="ri-calendar-line"></i>
+          <span class="menu-text">Consultation</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{url_for('hospitalisation_doctor')}}">
+          <i class="ri-news-line"></i>
+          <span class="menu-text">Hospitalisation</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{url_for('dossier_medical_doctor')}}">
+          <i class="ri-calendar-line"></i>
+          <span class="menu-text">Dossier medical</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{url_for('messageire_doctor')}}">
+          <i class="ri-calendar-line"></i>
+          <span class="menu-text">Messagerie</span>
+        </a>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-dossier-line"></i>
+          <span class="menu-text">Accès aux modules IA</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="{{url_for('resumer_dossier_doctor')}}">Résumé des dossiers médicaux</a>
+          </li>
+          <li>
+            <a href="{{url_for('sugetion_doctor')}}">Suggestion de traitements </a>
+          </li>
+          <li>
+            <a href="{{url_for('surveillance_dossier_doctor')}}">Surveillance des patient</a>
+          </li>
+        </ul>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-dossier-line"></i>
+          <span class="menu-text">Rendez-vous</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="{{url_for('rendez_vous_doctor')}}">Rendez-vous</a>
+          </li>
+          <li>
+            <a href="{{url_for('liste_rendez_vous_doctor')}}">Liste de rendez-vous </a>
+          </li>
+          <li>
+            <a href="{{url_for('prendre_rendez_vous_doctor')}}">Prendre rendez-vous</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="{{url_for('evenement_doctor')}}">
+          <i class="ri-calendar-line"></i>
+          <span class="menu-text">Evenement</span>
+        </a>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-group-2-line"></i>
+          <span class="menu-text">Congé & presence</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="{{url_for('presence_doctor')}}">Présence assiduité</a>
+          </li>
+          <li>
+            <a href="{{url_for('conge_doctor')}}">Congé personnel</a>
+          </li>
+        </ul>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-money-dollar-circle-line"></i>
+          <span class="menu-text">Salaires</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="payslip.html">Fiche de paie</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="{{url_for('galerie_doctor')}}">
+          <i class="ri-tent-line"></i>
+          <span class="menu-text">Galerie</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{url_for('actualiter_doctor')}}">
+          <i class="ri-news-line"></i>
+          <span class="menu-text">Actualités et mises à jour</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{url_for('parametre_doctor')}}">
+          <i class="ri-settings-5-line"></i>
+          <span class="menu-text">Parametre</span>
+        </a>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-login-circle-line"></i>
+          <span class="menu-text">Comptes</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="{{url_for('login')}}">Connection</a>
+          </li>
+          <li>
+            <a href="{{url_for('logout')}}">Déconnection</a>
+          </li>
+          <li>
+            <a href="{{url_for('reset_pasword')}}">Rénistaliser mot de passe</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="#!">
+          <i class="ri-exchange-line"></i>
+          <span class="menu-text">Chip</span>
+          <span class="badge bg-primary ms-auto">6</span>
+        </a>
+      </li>
+      <li>
+        <a href="#!">
+          <i class="ri-ticket-line"></i>
+          <span class="menu-text">Badge</span>
+          <span class="badge border border-primary text-primary ms-auto">Chip</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Sidebar menu ends -->
+
+  <!-- Sidebar contact starts -->
+  <div class="sidebar-contact">
+    <p class="fw-light mb-1 text-nowrap text-truncate">Contact d'urgence</p>
+    <h5 class="m-0 lh-1 text-nowrap text-truncate">91271004</h5>
+    <i class="ri-phone-line"></i>
+  </div>
+  <!-- Sidebar contact ends -->
+
+</nav>

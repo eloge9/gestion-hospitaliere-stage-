@@ -1,0 +1,57 @@
+{% extends "admin/base_admin.html" %}
+
+{% block content %}
+<div class="app-container">
+    <div class="app-hero-header d-flex align-items-center mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Admin</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('liste_admin') }}">Liste des administrateurs</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Modifier administrateur</li>
+        </ol>
+    </div>
+
+    <div class="app-body">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5>Modifier l’administrateur</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if admin %}
+                        <form method="POST" action="{{ url_for('modifier_admin', id=admin.ident) }}">
+                            <div class="mb-3">
+                                <label for="nom_complet" class="form-label">Nom complet *</label>
+                                <input type="text" class="form-control" id="nom_complet" name="nom_complet" required
+                                    value="{{ admin.nom_complet }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email_admin" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email_admin" name="email_admin" required
+                                    value="{{ admin.email_admin }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="numero_telephone" class="form-label">Téléphone</label>
+                                <input type="tel" class="form-control" id="numero_telephone" name="numero_telephone"
+                                    value="{{ admin.numero_telephone }}">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Modifier</button>
+                            <a href="{{ url_for('liste_admin') }}" class="btn btn-secondary ms-2">Annuler</a>
+                        </form>
+                        {% else %}
+                        <div class="alert alert-danger">Aucun administrateur trouvé.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-footer bg-white text-center mt-3">
+        © Medflex Admin 2024
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,187 @@
+<nav id="sidebar" class="sidebar-wrapper">
+
+  <!-- Sidebar profile starts -->
+  <div class="sidebar-profile">
+    <img src="{{ url_for('static', filename='images/user6.png') }}" class="img-shadow img-3x me-3 rounded-5"
+      alt="Hospital Admin Templates">
+    <div class="m-0">
+      <h5 class="mb-1 profile-name text-nowrap text-truncate">Nick Gonzalez</h5>
+      <p class="m-0 small profile-name text-nowrap text-truncate">Dept Admin</p>
+    </div>
+  </div>
+  <!-- Sidebar profile ends -->
+
+  <!-- Sidebar menu starts -->
+  <div class="sidebarMenuScroll">
+    <ul class="sidebar-menu">
+      <li class="active current-page">
+        <a href="dashboard3.html">
+          <i class="ri-home-5-line"></i>
+          <span class="menu-text">Tableau de bord</span>
+        </a>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-hotel-bed-line"></i>
+          <span class="menu-text">Chambre</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="add-room.html">Ajouter Chambre</a>
+          </li>
+          <li>
+            <a href="add-room.html">Liste de chambre</a>
+          </li>
+          <li>
+            <a href="edit-room.html">Modifier chambre</a>
+          </li>
+        </ul>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-hotel-bed-line"></i>
+          <span class="menu-text">Lit</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="add-room.html">Ajouter Lit</a>
+          </li>
+          <li>
+            <a href="add-room.html">Liste de Lit</a>
+          </li>
+          <li>
+            <a href="edit-room.html">Modifier Lit</a>
+          </li>
+        </ul>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-hotel-bed-line"></i>
+          <span class="menu-text">Materiel</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="add-room.html">Ajouter Materiel</a>
+          </li>
+          <li>
+            <a href="add-room.html">Liste de Materiel</a>
+          </li>
+          <li>
+            <a href="edit-room.html">Modifier Materiel</a>
+          </li>
+        </ul>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-car-washing-line"></i>
+          <span class="menu-text">Ambulance</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="ambulance-list.html">Liste Ambulance</a>
+          </li>
+          <li>
+            <a href="add-ambulance.html">Ajouter Ambulance</a>
+          </li>
+          <li>
+            <a href="edit-ambulance.html">Modifier Ambulance</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="events.html">
+          <i class="ri-calendar-line"></i>
+          <span class="menu-text">Messagerie</span>
+        </a>
+      </li>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-group-2-line"></i>
+          <span class="menu-text">Congé & presence</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="staff-attendance.html">Présence assiduité</a>
+          </li>
+          <li>
+            <a href="staff-leaves.html">Congé personnel</a>
+          </li>
+        </ul>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-money-dollar-circle-line"></i>
+          <span class="menu-text">Salaires</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="payslip.html">Fiche de paie</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="gallery.html">
+          <i class="ri-tent-line"></i>
+          <span class="menu-text">Galerie</span>
+        </a>
+      </li>
+      <li>
+        <a href="news.html">
+          <i class="ri-news-line"></i>
+          <span class="menu-text">Actualités et mises à jour</span>
+        </a>
+      </li>
+      <li>
+        <a href="settings.html">
+          <i class="ri-settings-5-line"></i>
+          <span class="menu-text">Parametre</span>
+        </a>
+      </li>
+      <li class="treeview">
+        <a href="#!">
+          <i class="ri-login-circle-line"></i>
+          <span class="menu-text">Comptes</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="login.html">Connection</a>
+          </li>
+          <li>
+            <a href="signup.html">Déconnection</a>
+          </li>
+          <li>
+            <a href="forgot-password.html">Mot de passe oublié </a>
+          </li>
+          <li>
+            <a href="reset-password.html">Rénistaliser mot de passe</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="#!">
+          <i class="ri-exchange-line"></i>
+          <span class="menu-text">Chip</span>
+          <span class="badge bg-primary ms-auto">6</span>
+        </a>
+      </li>
+      <li>
+        <a href="#!">
+          <i class="ri-ticket-line"></i>
+          <span class="menu-text">Badge</span>
+          <span class="badge border border-primary text-primary ms-auto">Chip</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Sidebar menu ends -->
+
+  <!-- Sidebar contact starts -->
+  <div class="sidebar-contact">
+    <p class="fw-light mb-1 text-nowrap text-truncate">Emergency Contact</p>
+    <h5 class="m-0 lh-1 text-nowrap text-truncate">0987654321</h5>
+    <i class="ri-phone-line"></i>
+  </div>
+  <!-- Sidebar contact ends -->
+
+</nav>

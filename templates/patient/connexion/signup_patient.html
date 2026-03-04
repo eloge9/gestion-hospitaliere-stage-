@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/signup.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 30 Mar 2025 01:32:37 GMT -->
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MediJutsu</title>
+
+  <!-- Meta -->
+  <meta name="description" content="Marketplace for Bootstrap Admin Dashboards">
+  <meta property="og:title" content="Admin Templates - Dashboard Templates">
+  <meta property="og:description" content="Marketplace for Bootstrap Admin Dashboards">
+  <meta property="og:type" content="Website">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/logo-medijutsu.ico') }}">
+
+  <!-- Core / Vendor CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/overlay-scroll/OverlayScrollbars.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='fonts/remix/remixicon.css') }}">
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.min.css') }}">
+
+</head>
+
+<body class="login-bg">
+
+  <!-- Container starts -->
+  <div class="container">
+
+    <!-- Auth wrapper starts -->
+    <div class="auth-wrapper">
+      <!-- Form starts -->
+      <form action="{{ action_url }}" method="POST">
+        <div class="auth-box">
+          <a href="{{ action_url }}" class="auth-logo mb-4">
+            <img src="{{ url_for('static', filename='images/logo/logo_header2.png') }}" alt="Bootstrap Gallery">
+          </a>
+          <h4 class="mb-4">S'inscrire</h4>
+
+          <div class="mb-3">
+            <label class="form-label" for="name">Votre nom <span class="text-danger">*</span></label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="Enter your name" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="prenom">Votre prenom <span class="text-danger">*</span></label>
+            <input type="text" id="prenom" name="prenom" class="form-control" placeholder="Enter your first name"
+              required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="email">Votre email <span class="text-danger">*</span></label>
+            <input type="text" id="email" name="email" class="form-control" placeholder="Enter your email" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="tel">Votre numero de telephone <span class="text-danger">*</span></label>
+            <input type="tel" id="tel" name="tel" class="form-control" placeholder="Enter your number">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="pwd">Votre mot de passe <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <input type="password" id="pwd" name="pwd" class="form-control" placeholder="Enter password" required>
+              <button class="btn btn-outline-secondary" type="button">
+                <i class="ri-eye-line text-primary"></i>
+              </button>
+            </div>
+
+            <label class="form-label" for="conf_pwd">Confirmez le mot de passe <span
+                class="text-danger">*</span></label>
+            <div class="input-group">
+              <input type="password" id="conf_pwd" name="conf_pwd" class="form-control" placeholder="Confirm password"
+                required>
+              <button class="btn btn-outline-secondary" type="button">
+                <i class="ri-eye-line text-primary"></i>
+              </button>
+            </div>
+            <div class="form-text">
+              Votre mot de passe doit comporter 8 à 20 caractères.
+            </div>
+          </div>
+
+          <div class="mb-3 d-grid gap-2">
+            <button type="submit" class="btn btn-primary">S'inscrire</button>
+            <a href="{{url_for('login')}}" class="btn btn-secondary">Vous avez déjà un compte? Se connecter</a>
+          </div>
+
+        </div>
+
+    </div>
+    <!-- Form ends -->
+
+  </div>
+  <!-- Auth wrapper ends -->
+
+  </div>
+  <!-- Container ends -->
+
+</body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/signup.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 30 Mar 2025 01:32:37 GMT -->
+
+</html>

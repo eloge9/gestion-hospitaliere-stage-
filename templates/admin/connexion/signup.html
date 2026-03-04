@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/signup.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 30 Mar 2025 01:32:37 GMT -->
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MediJutsu</title>
+
+  <!-- Meta -->
+  <meta name="description" content="Marketplace for Bootstrap Admin Dashboards">
+  <meta property="og:title" content="Admin Templates - Dashboard Templates">
+  <meta property="og:description" content="Marketplace for Bootstrap Admin Dashboards">
+  <meta property="og:type" content="Website">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/logo-medijutsu.ico') }}">
+
+  <!-- Core / Vendor CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/overlay-scroll/OverlayScrollbars.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='fonts/remix/remixicon.css') }}">
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.min.css') }}">
+
+</head>
+
+<body class="login-bg">
+
+  <!-- Container starts -->
+  <div class="container">
+
+    <!-- Auth wrapper starts -->
+    <div class="auth-wrapper">
+      {% if role == "admin" %}
+      {% set action_url = url_for('signup') %}
+      {% elif role == "doctor" %}
+      {% set action_url = url_for('signup_doctor') %}
+      {% elif role == "patient" %}
+      {% set action_url = url_for('signup_patient_admin') %}
+      {% elif role == "secretaire" %}
+      {% set action_url = url_for('signup_secretaire') %}
+      {% elif role == "ambulancier" %}
+      {% set action_url = url_for('signup_ambulancier') %}
+      {% elif role == "caissier" %}
+      {% set action_url = url_for('signup_caissier') %}
+      {% elif role == "logistique" %}
+      {% set action_url = url_for('signup_logistique') %}
+      {% elif role == "stock" %}
+      {% set action_url = url_for('signup_stock') %}
+      {% elif role == "infirmier" %}
+      {% set action_url = url_for('signup_infirmier') %}
+      {% elif role == "interne" %}
+      {% set action_url = url_for('signup_interne') %}
+      {% endif %}
+      <!-- Form starts -->
+      <form action="{{ action_url }}" method="POST">
+        <div class="auth-box">
+          <a href="{{ action_url }}" class="auth-logo mb-4">
+            <img src="{{ url_for('static', filename='images/logo/logo_header2.png') }}" alt="Bootstrap Gallery">
+          </a>
+          {% if role == "admin" %}
+          <h4 class="mb-4">S'inscrire</h4>
+          {% elif role == "doctor" %}
+          <h4 class="mb-4">Inscription d'un Docteur</h4>
+          {% elif role == "patient" %}
+          <h4 class="mb-4">Inscription d'un Patient</h4>
+          {% elif role == "secretaire" %}
+          <h4 class="mb-4">Inscription d'un Secretaire Medical</h4>
+          {% elif role == "ambulancier" %}
+          <h4 class="mb-4">Inscription d'un Anbulancier</h4>
+          {% elif role == "caissier" %}
+          <h4 class="mb-4">Inscription d'un Caissié</h4>
+          {% elif role == "logistique" %}
+          <h4 class="mb-4">Inscription d'un Gestionaire Logistique</h4>
+          {% elif role == "stock" %}
+          <h4 class="mb-4">Inscription d'un gestionaire de Stock</h4>
+          {% elif role == "infirmier" %}
+          <h4 class="mb-4">Inscription d'un Infirmier</h4>
+          {% elif role == "interne" %}
+          <h4 class="mb-4">Inscription d'un Interne Medecine</h4>
+          {% endif %}
+
+          {% if role == "admin" %}
+          <div class="mb-3">
+            <label class="form-label" for="name">Nom <span class="text-danger">*</span></label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="Entrez le nom" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="prenom">Prénom <span class="text-danger">*</span></label>
+            <input type="text" id="prenom" name="prenom" class="form-control" placeholder="Entrez le prénom" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="tel">Numéro de téléphone</label>
+            <input type="text" id="tel" name="tel" class="form-control" placeholder="Entrez le numéro de téléphone">
+          </div>
+          {% endif %}
+
+
+          <div class="mb-3">
+            <label class="form-label" for="email">Votre email <span class="text-danger">*</span></label>
+            <input type="text" id="email" name="email" class="form-control" placeholder="Enter your email" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="pwd">Votre mot de passe <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <input type="password" id="pwd" name="pwd" class="form-control" placeholder="Enter password" required>
+              <button class="btn btn-outline-secondary" type="button">
+                <i class="ri-eye-line text-primary"></i>
+              </button>
+            </div>
+
+            <label class="form-label" for="conf_pwd">Confirmez le mot de passe <span
+                class="text-danger">*</span></label>
+            <div class="input-group">
+              <input type="password" id="conf_pwd" name="conf_pwd" class="form-control" placeholder="Confirm password"
+                required>
+              <button class="btn btn-outline-secondary" type="button">
+                <i class="ri-eye-line text-primary"></i>
+              </button>
+            </div>
+            <div class="form-text">
+              les mot de mot de passe doivent corespondre
+            </div>
+          </div>
+
+          <div class="mb-3 d-grid gap-2">
+            <button type="submit" class="btn btn-primary">S'inscrire</button>
+            {% if role == "admin" %}
+            <a href="{{url_for('login')}}" class="btn btn-secondary">Vous avez déjà un compte? Se connecter</a>
+            {% endif %}
+          </div>
+
+        </div>
+
+    </div>
+    <!-- Form ends -->
+
+  </div>
+  <!-- Auth wrapper ends -->
+
+  </div>
+  <!-- Container ends -->
+
+</body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/signup.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 30 Mar 2025 01:32:37 GMT -->
+
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 30 Mar 2025 01:27:50 GMT -->
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MediJutsu</title>
+
+  <!-- Meta -->
+  <meta name="description" content="Marketplace for Bootstrap Admin Dashboards">
+  <meta property="og:title" content="Admin Templates - Dashboard Templates">
+  <meta property="og:description" content="Marketplace for Bootstrap Admin Dashboards">
+  <meta property="og:type" content="Website">
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/logo-medijutsu.ico') }}">
+
+  <!-- Core / Vendor CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/overlay-scroll/OverlayScrollbars.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='fonts/remix/remixicon.css') }}">
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.min.css') }}">
+
+</head>
+
+<body>
+
+  <!-- Loading starts -->
+  <div id="loading-wrapper">
+    <div class='spin-wrapper'>
+      <div class='spin'>
+        <div class='inner'></div>
+      </div>
+      <div class='spin'>
+        <div class='inner'></div>
+      </div>
+      <div class='spin'>
+        <div class='inner'></div>
+      </div>
+      <div class='spin'>
+        <div class='inner'></div>
+      </div>
+      <div class='spin'>
+        <div class='inner'></div>
+      </div>
+      <div class='spin'>
+        <div class='inner'></div>
+      </div>
+    </div>
+  </div>
+  <!-- Loading ends -->
+
+  <!-- Page wrapper starts -->
+  <div class="page-wrapper">
+
+    <!-- App header starts -->
+    {% block header %}
+    {% include 'ambulance/includes_ambulance/header_ambulance.html' %}
+      {% endblock %}  
+    <!-- App header ends -->
+
+    <!-- Main container starts -->
+    <div class="main-container">
+
+      <!-- Sidebar wrapper starts -->
+      {% block navbar %}
+      {% include 'ambulance/includes_ambulance/navbar_ambulance.html' %}
+        {% endblock %}  
+      <!-- Sidebar wrapper ends -->
+
+      <!-- App container starts -->
+     
+        {% block content %}
+
+        {% endblock %}  
+      <!-- App container ends -->
+
+    </div>
+    <!-- Main container ends -->
+
+  </div>
+  <!-- Page wrapper ends -->
+
+  <!-- *************
+			************ JavaScript Files *************
+		************* -->
+  <!-- Required jQuery first, then Bootstrap Bundle JS -->
+  <!-- Core JS -->
+  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+
+  <!-- ************* Vendor JS Files ************* -->
+
+  <!-- Overlay Scroll JS -->
+  <script src="{{ url_for('static', filename='vendor/overlay-scroll/jquery.overlayScrollbars.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/overlay-scroll/custom-scrollbar.js') }}"></script>
+
+  <!-- Apex Charts -->
+  <script src="{{ url_for('static', filename='vendor/apex/apexcharts.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/apex/custom/home/patients.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/apex/custom/home/treatment.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/apex/custom/home/available-beds.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/apex/custom/home/earnings.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/apex/custom/home/gender-age.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/apex/custom/home/claims.js') }}"></script>
+
+  <!-- Custom JS -->
+  <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+
+</body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 30 Mar 2025 01:29:29 GMT -->
+
+</html>

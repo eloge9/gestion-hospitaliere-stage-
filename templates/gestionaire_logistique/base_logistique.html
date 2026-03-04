@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/room-statistics.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 30 Mar 2025 01:31:18 GMT -->
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap Gallery - Medical Admin Templates & Dashboards</title>
+
+    <!-- Meta -->
+    <meta name="description" content="Marketplace for Bootstrap Admin Dashboards">
+    <meta property="og:title" content="Admin Templates - Dashboard Templates">
+    <meta property="og:description" content="Marketplace for Bootstrap Admin Dashboards">
+    <meta property="og:type" content="Website">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.svg') }}">
+
+    <!-- *************
+        ************ CSS Files *************
+    ************* -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/remix/remixicon.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.min.css') }}">
+
+    <!-- *************
+        ************ Vendor Css Files *************
+    ************* -->
+
+    <!-- Scrollbar CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/overlay-scroll/OverlayScrollbars.min.css') }}">
+  </head>
+
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      {% block header%}
+        {% include "gestionaire_logistique/includes_logistique/header_logistique.html"%}
+      {% endblock%}
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        {% block navbar%}
+          {% include "gestionaire_logistique/includes_logistique/navbar_logistique.html"%}
+        {% endblock%}
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        {% block content%}
+
+        {% endblock%}
+
+        <!-- App container ends -->
+
+        <!-- App footer starts -->
+        {% block footer%}
+          {% include "gestionaire_logistique/includes_logistique/footer_logistique.html"%}
+        {% endblock%}
+        <!-- App footer ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+
+    <!-- *************
+        ************ Vendor Js Files *************
+    ************* -->
+
+    <!-- Overlay Scroll JS -->
+    <script src="{{ url_for('static', filename='vendor/overlay-scroll/jquery.overlayScrollbars.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/overlay-scroll/custom-scrollbar.js') }}"></script>
+
+    <!-- Apex Charts -->
+    <script src="{{ url_for('static', filename='vendor/apex/apexcharts.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/apex/custom/rooms/admissions.js') }}"></script>
+
+    <!-- Custom JS files -->
+    <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/room-statistics.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 30 Mar 2025 01:31:19 GMT -->
+</html>
