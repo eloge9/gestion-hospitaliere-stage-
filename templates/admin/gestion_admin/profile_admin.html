@@ -1,0 +1,61 @@
+{% extends "admin/base_admin.html" %}
+
+{% block content %}
+<div class="app-container">
+    <div class="app-hero-header d-flex align-items-center mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Admin</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('liste_admin') }}">Liste des administrateurs</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Profil administrateur</li>
+        </ol>
+    </div>
+
+    <div class="app-body">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5>Profil de l'administrateur</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if admin %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>ID:</strong> #{{ admin.id }}</p>
+                                <p><strong>Nom:</strong> {{ admin.nom }}</p>
+                                <p><strong>Prénom:</strong> {{ admin.prenom }}</p>
+                                <p><strong>Email:</strong> {{ admin.email_admin }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Téléphone:</strong> {{ admin.numero_telephone or "Non défini" }}</p>
+                                <p><strong>Date d'inscription:</strong>
+                                    {{ admin.date_inscription.strftime('%d/%m/%Y %H:%M') if admin.date_inscription else
+                                    "Non défini" }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('modifier_admin', id=admin.id) }}" class="btn btn-primary">
+                                <i class="ri-edit-line me-1"></i> Modifier
+                            </a>
+                            <a href="{{ url_for('liste_admin') }}" class="btn btn-secondary">
+                                <i class="ri-arrow-left-line me-1"></i> Retour à la liste
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-danger">Aucun administrateur trouvé.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-footer bg-white text-center mt-3">
+        © Medflex Admin 2024
+    </div>
+</div>
+{% endblock %}

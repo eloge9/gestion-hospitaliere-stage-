@@ -62,15 +62,16 @@ def init_admin(app, mysql, mail):
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
         if request.method == "POST":
-            nom_complet = request.form['nom_complet']
+            nom = request.form.get('nom')
+            prenom = request.form.get('prenom')
             email = request.form['email_admin']
             numero_telephone = request.form['numero_telephone']
 
             # Exécution de la requête UPDATE
             cursor.execute("""
-                UPDATE admin SET nom_complet=%s, email_admin=%s, numero_telephone=%s 
+                UPDATE admin SET nom=%s, prenom=%s, email_admin=%s, numero_telephone=%s 
                 WHERE id=%s
-            """, (nom_complet, email, numero_telephone, id))
+            """, (nom, prenom, email, numero_telephone, id))
 
             mysql.connection.commit()
             flash("Les informations ont été modifiées avec succès.", "success")
@@ -79,14 +80,20 @@ def init_admin(app, mysql, mail):
         # Sinon (GET), on affiche les infos actuelles dans le formulaire
         cursor.execute("SELECT * FROM admin WHERE id = %s", (id,))
         admin = cursor.fetchone()
+        cursor.close()
+        
+        # Debug: afficher les données récupérées
+        print(f"Admin récupéré: {admin}")
+        
         return render_template("admin/gestion_admin/modifier_admin.html", admin=admin)
 
     @app.route('/admin/voir/<int:id>')
     @login_required("admin")
     def voir_admin(id):
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("SELECT id, nom_complet, email_admin, numero_telephone, date_inscription FROM admin WHERE id = %s", (id,))
+        cursor.execute("SELECT id, nom, prenom, email_admin, numero_telephone, date_inscription FROM admin WHERE id = %s", (id,))
         admin = cursor.fetchone()  # Un seul admin
+        cursor.close()
 
         if not admin:
             flash("Administrateur introuvable.", "warning")
@@ -135,5 +142,28 @@ def init_admin(app, mysql, mail):
                     return f"Erreur lors de l'inscription : {e}"
 
             return render_template('admin/connexion/signup.html', loggedIn=loggedIn, firstName=firstName, role="admin")
+        else:
+            return redirect(url_for('login'))
+
+    @app.route('/admin/verifier_admin', methods=['POST'])
+    @login_required("admin")
+    def verifier_admin():
+        """Vérifier si un admin existe déjà"""
+        if 'email_admin' in session:
+            email = request.form.get('email')
+            cursor = mysql.connection.cursor()
+            
+            try:
+                cursor.execute("SELECT COUNT(*) FROM admin WHERE email_admin = %s", (email,))
+                count = cursor.fetchone()[0]
+                cursor.close()
+                
+                if count > 0:
+                    return {'exists': True, 'message': 'Cet admin existe déjà'}
+                else:
+                    return {'exists': False, 'message': 'Admin disponible'}
+                    
+            except Exception as e:
+                return {'exists': False, 'message': f'Erreur: {str(e)}'}
         else:
             return redirect(url_for('login'))
