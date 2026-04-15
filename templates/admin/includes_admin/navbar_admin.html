@@ -5,7 +5,7 @@
         <img src="{{url_for('static', filename='images/user6.png')}}" class="img-shadow img-3x me-3 rounded-5"
             alt="Hospital Admin Templates">
         <div class="m-0">
-            <h5 class="mb-1 profile-name text-nowrap text-truncate">GOMINA eloge</h5>
+            <h5 class="mb-1 profile-name text-nowrap text-truncate">{{ session['nom'] }} {{ session['prenom'] }}</h5>
             <p class="m-0 small profile-name text-nowrap text-truncate">Departement de Admin</p>
         </div>
     </div>
@@ -40,6 +40,34 @@
             </li>
             <li class="treeview">
                 <a href="#!">
+                    <i class="ri-heart-pulse-line"></i>
+                    <span class="menu-text">Patients</span>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="{{ url_for('liste_patient_admin') }}">Liste des Patients</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('signup_patient_admin') }}">Ajouter Patient</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#!">
+                    <i class="ri-capsule-line"></i>
+                    <span class="menu-text">Pharmacie</span>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="{{ url_for('liste_categories_pharmacie') }}">Catégories</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('liste_medicaments_pharmacie') }}">Médicaments</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#!">
                     <i class="ri-stethoscope-line"></i>
                     <span class="menu-text">Docteur</span>
                 </a>
@@ -48,7 +76,7 @@
                         <a href="{{url_for('liste_docteur_admin')}}">Liste des Docteur</a>
                     </li>
                     <li>
-                        <a href="{{url_for('signup_doctor')}}">Ajouter Docteur</a>
+                        <a href="#">Ajouter Docteur</a>
                     </li>
                 </ul>
             </li>
@@ -69,23 +97,6 @@
                     </li>
                     <li>
                         <a href="edit-doctors.html">Modifier Interne medecine</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="treeview">
-                <a href="#!">
-                    <i class="ri-heart-pulse-line"></i>
-                    <span class="menu-text">Patients</span>
-                </a>
-                <ul class="treeview-menu">
-                    <li>
-                        <a href="patients-list.html">Liste des Patients</a>
-                    </li>
-                    <li>
-                        <a href="add-patient.html">Ajouter Patient</a>
-                    </li>
-                    <li>
-                        <a href="edit-patient.html">Modifier Patient</a>
                     </li>
                 </ul>
             </li>
@@ -253,23 +264,6 @@
                 </li>
                 <li>
                     <a href="edit-staff.html">Modifier un personnel</a>
-                </li>
-            </ul>
-        </li>
-        <li class="treeview">
-            <a href="#!">
-                <i class="ri-dossier-line"></i>
-                <span class="menu-text">Accès aux modules IA</span>
-            </a>
-            <ul class="treeview-menu">
-                <li>
-                    <a href="{{url_for('resumer_dossier_doctor')}}">Résumé des dossiers médicaux</a>
-                </li>
-                <li>
-                    <a href="{{url_for('sugetion_doctor')}}">Suggestion de traitements </a>
-                </li>
-                <li>
-                    <a href="{{url_for('surveillance_dossier_doctor')}}">Surveillance des patient</a>
                 </li>
             </ul>
         </li>

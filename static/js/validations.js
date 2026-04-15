@@ -34,3 +34,21 @@ function updateDeleteLink(button) {
   const deleteUrl = `/admin/supprimer/${adminId}`; // Chemin exact selon ta route Flask
   document.getElementById("confirmDeleteBtn").setAttribute("href", deleteUrl);
 }
+
+function updateDeleteLinkPatient(button) {
+  const patientId = button.getAttribute("data-id");
+  const deleteUrl = `/admin/patients/supprimer/${patientId}`; // Chemin exact selon ta route Flask
+  document.getElementById("confirmDeleteBtn").setAttribute("href", deleteUrl);
+}
+
+function updateDeleteLinkCategorie(button) {
+  const id = button.getAttribute("data-id");
+  const deleteUrl = `/admin/pharmacie/categorie/${id}/supprimer`;
+  document.getElementById("confirmDeleteBtn").setAttribute("href", deleteUrl);
+}
+
+function updateDeleteLinkMedicament(button) {
+  const id = button.getAttribute("data-id");
+  const deleteUrl = `/admin/pharmacie/medicament/${id}/supprimer`;
+  document.getElementById("confirmDeleteBtn").setAttribute("href", deleteUrl);
+}

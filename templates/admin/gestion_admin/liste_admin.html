@@ -34,7 +34,7 @@
                     <tbody>
                         {% for admin in admins %}
                         <tr>
-                            <td>#{{ admin.ident }}</td>
+                            <td>#{{ admin.id }}</td>
                             <td>
                                 <i class="ri-shield-user-line text-primary me-2" title="Administrateur"></i>
                                 {{ admin.nom_complet or "Non défini" }}
@@ -44,15 +44,15 @@
                             <td>
                                 <div class="d-inline-flex gap-1">
                                     <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#modalDelete" data-id="{{ admin.ident }}"
+                                        data-bs-target="#modalDelete" data-id="{{ admin.id }}"
                                         onclick="updateDeleteLink(this)">
                                         <i class="ri-delete-bin-line"></i>
                                     </button>
-                                    <a href="{{ url_for('modifier_admin', id=admin.ident) }}"
+                                    <a href="{{ url_for('modifier_admin', id=admin.id) }}"
                                         class="btn btn-outline-success btn-sm">
                                         <i class="ri-edit-box-line"></i>
                                     </a>
-                                    <a href="{{ url_for('voir_admin', id=admin.ident) }}"
+                                    <a href="{{ url_for('voir_admin', id=admin.id) }}"
                                         class="btn btn-outline-info btn-sm">
                                         <i class="ri-eye-line"></i>
                                     </a>

@@ -1,6 +1,344 @@
-{%extends 'admin/base_admin.html' %}
+{% extends "admin/base_admin.html" %}
+{% block content %}
 
-{% block content%}
+<div class="app-container">
+    <!-- App hero header -->
+    <div class="app-hero-header d-flex align-items-center">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="{{ url_for('index') }}">Home</a>
+            </li>
+            <li class="breadcrumb-item text-primary" aria-current="page">
+                Ajout d'un Patient
+            </li>
+        </ol>
+    </div>
 
+    <!-- App body -->
+    <div class="app-body">
+        <div class="row gx-3">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            </i>Ajout d'un Patient
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('signup_patient_admin') }}" method="POST">
+                            <!-- Flash messages -->
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %} {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-3"
+                                role="alert">
+                                <i class="ri-error-warning-line me-2"></i>{{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% endfor %} {% endif %} {% endwith %}
 
-{%endblock%}
+                            <!-- ===== INFORMATIONS DU PATIENT ===== -->
+                            <div class="row gx-3 mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-primary mb-3">
+                                        <i class="ri-user-line me-2"></i>Informations du Patient
+                                    </h6>
+                                </div>
+                            </div>
+
+                            <div class="row gx-3">
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nom <span class="text-danger">*</span></label>
+                                        <input type="text" name="nom" class="form-control" placeholder="Entrez le nom"
+                                            required>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Prénom <span class="text-danger">*</span></label>
+                                        <input type="text" name="prenom" class="form-control"
+                                            placeholder="Entrez le prénom" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Profession</label>
+                                        <input type="text" name="profession" class="form-control"
+                                            placeholder="Profession du patient">
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Date de Naissance <span
+                                                class="text-danger">*</span></label>
+                                        <input type="date" name="date_naissance" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Sexe <span class="text-danger">*</span></label>
+                                        <div class="mt-2">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="sexe" id="genreM"
+                                                    value="Homme" required>
+                                                <label class="form-check-label" for="genreM">Masculin</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="sexe" id="genreF"
+                                                    value="Femme">
+                                                <label class="form-check-label" for="genreF">Féminin</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Téléphone </label>
+                                        <input type="text" name="tel" class="form-control"
+                                            placeholder="Numéro de téléphone">
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Ville <span class="text-danger">*</span></label>
+                                        <input type="text" name="ville" class="form-control" placeholder="Ex : Lomé"
+                                            required>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Adresse</label>
+                                        <input type="text" name="adresse" class="form-control"
+                                            placeholder="Entrez l'adresse">
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" name="email" class="form-control"
+                                            placeholder="Entrez l'email">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== SECTION PERSONNES À PRÉVENIR ===== -->
+                            <div class="row gx-3 mb-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">
+                                                <i class="ri-user-heart-line me-2"></i>Personnes à prévenir
+                                            </h6>
+                                            <button type="button" class="btn btn-sm btn-primary"
+                                                onclick="ajouterPersonne()">
+                                                <i class="ri-add-line"></i> Ajouter une personne
+                                            </button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="personnesContainer">
+                                                <!-- Les personnes seront ajoutées dynamiquement ici -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== SECTION ASSURANCES ===== -->
+                            <div class="row gx-3 mb-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">
+                                                <i class="ri-shield-check-line me-2"></i>Assurances
+                                            </h6>
+                                            <button type="button" class="btn btn-sm btn-primary"
+                                                onclick="ajouterAssurance()">
+                                                <i class="ri-add-line"></i> Ajouter une assurance
+                                            </button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="assurancesContainer">
+                                                <!-- Les assurances seront ajoutées dynamiquement ici -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== BOUTONS ===== -->
+                            <div class="row gx-3">
+                                <div class="col-sm-12">
+                                    <div class="d-flex gap-2 justify-content-end mt-4">
+                                        <a href="{{ url_for('liste_patient_admin') }}"
+                                            class="btn btn-outline-secondary">
+                                            <i class="ri-arrow-left-line me-1"></i>Annuler
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="ri-user-add-line me-1"></i>Ajouter le Patient
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- App body ends -->
+</div>
+
+<script>
+    // Variables globales pour compter les éléments
+    let personneIndex = 0;
+    let assuranceIndex = 0;
+
+    // Fonction pour ajouter une personne à prévenir
+    function ajouterPersonne() {
+        const container = document.getElementById('personnesContainer');
+        const personneDiv = document.createElement('div');
+        personneDiv.className = 'personne-item border rounded p-3 mb-3 position-relative';
+        personneDiv.innerHTML = `
+      <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" onclick="supprimerPersonne(this)">
+        <i class="ri-close-line"></i>
+      </button>
+      <div class="row gx-3">
+        <div class="col-xxl-3 col-lg-4 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Nom</label>
+            <input type="text" name="personnes[${personneIndex}][nom]" class="form-control" placeholder="Nom de la personne">
+          </div>
+        </div>
+        <div class="col-xxl-3 col-lg-4 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Prénom</label>
+            <input type="text" name="personnes[${personneIndex}][prenom]" class="form-control" placeholder="Prénom de la personne">
+          </div>
+        </div>
+        <div class="col-xxl-3 col-lg-4 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Profession</label>
+            <input type="text" name="personnes[${personneIndex}][profession]" class="form-control" placeholder="Profession">
+          </div>
+        </div>
+        <div class="col-xxl-3 col-lg-4 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Téléphone</label>
+            <input type="text" name="personnes[${personneIndex}][telephone]" class="form-control" placeholder="Numéro de téléphone">
+          </div>
+        </div>
+        <div class="col-xxl-3 col-lg-4 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Type de personne</label>
+            <select name="personnes[${personneIndex}][type_personne]" class="form-control" onchange="toggleAutrePersonne(${personneIndex}, this.value)">
+              <option value="">Sélectionner...</option>
+              <option value="parent">Parent</option>
+              <option value="conjoint">Conjoint</option>
+              <option value="ami">Ami(e)</option>
+              <option value="collegue">Collègue</option>
+              <option value="autre">Autre</option>
+            </select>
+            <input type="text" name="personnes[${personneIndex}][type_personne_autre]" class="form-control mt-2" placeholder="Préciser le type..." style="display:none;" id="typePersonneAutre${personneIndex}">
+          </div>
+        </div>
+      </div>
+    `;
+        container.appendChild(personneDiv);
+        personneIndex++;
+    }
+
+    // Fonction pour ajouter une assurance
+    function ajouterAssurance() {
+        const container = document.getElementById('assurancesContainer');
+        const assuranceDiv = document.createElement('div');
+        assuranceDiv.className = 'assurance-item border rounded p-3 mb-3 position-relative';
+        assuranceDiv.innerHTML = `
+      <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" onclick="supprimerAssurance(this)">
+        <i class="ri-close-line"></i>
+      </button>
+      <div class="row gx-3">
+        <div class="col-xxl-4 col-lg-6 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Type d'assurance </label>
+            <select name="assurances[${assuranceIndex}][type_assurance]" class="form-control" onchange="toggleAutreAssurance(${assuranceIndex}, this.value)">
+              <option value="">Sélectionner...</option>
+              <option value="cnss">CNSS</option>
+              <option value="amu">AMU</option>
+              <option value="inam">INAM</option>
+              <option value="sunu">SUNU Assurances</option>
+              <option value="sanlam">Sanlam</option>
+              <option value="nsia">NSIA Assurances</option>
+              <option value="autre">Autre</option>
+            </select>
+            <input type="text" name="assurances[${assuranceIndex}][type_assurance_autre]" class="form-control mt-2" placeholder="Préciser le type d'assurance..." style="display:none;" id="typeAssuranceAutre${assuranceIndex}">
+          </div>
+        </div>
+        <div class="col-xxl-4 col-lg-6 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Numéro d'assurance </label>
+            <input type="text" name="assurances[${assuranceIndex}][numero_assurance]" class="form-control" placeholder="Numéro d'assurance">
+          </div>
+        </div>
+        <div class="col-xxl-4 col-lg-6 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Pourcentage (%)</label>
+            <input type="number" name="assurances[${assuranceIndex}][pourcentage]" class="form-control" placeholder="Ex: 80" min="0" max="100" step="0.01">
+          </div>
+        </div>
+      </div>
+    `;
+        container.appendChild(assuranceDiv);
+        assuranceIndex++;
+    }
+
+    // Fonctions pour supprimer des éléments
+    function supprimerPersonne(btn) {
+        btn.closest('.personne-item').remove();
+    }
+
+    function supprimerAssurance(btn) {
+        btn.closest('.assurance-item').remove();
+    }
+
+    // Fonctions pour gérer l'affichage des champs "Autre"
+    function toggleAutrePersonne(index, value) {
+        const field = document.getElementById(`typePersonneAutre${index}`);
+        if (value === 'autre') {
+            field.style.display = 'block';
+            field.setAttribute('required', 'required');
+        } else {
+            field.style.display = 'none';
+            field.removeAttribute('required');
+            field.value = '';
+        }
+    }
+
+    function toggleAutreAssurance(index, value) {
+        const field = document.getElementById(`typeAssuranceAutre${index}`);
+        if (value === 'autre') {
+            field.style.display = 'block';
+            field.setAttribute('required', 'required');
+        } else {
+            field.style.display = 'none';
+            field.removeAttribute('required');
+            field.value = '';
+        }
+    }
+
+    // Ajouter une personne et une assurance par défaut au chargement de la page
+    document.addEventListener('DOMContentLoaded', function () {
+        ajouterPersonne();
+        ajouterAssurance();
+    });
+</script>
+
+{% endblock %}

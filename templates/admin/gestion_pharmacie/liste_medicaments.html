@@ -1,0 +1,153 @@
+{% extends "admin/base_admin.html" %}
+{% block content %}
+
+<div class="app-container">
+  <div class="app-hero-header d-flex align-items-center">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+        <a href="{{ url_for('index') }}">Admin</a>
+      </li>
+      <li class="breadcrumb-item text-primary" aria-current="page">
+        Médicaments
+      </li>
+    </ol>
+  </div>
+
+  <div class="app-body">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title">
+          <i class="ri-medicine-bottle-line me-2"></i>Médicaments
+        </h5>
+        <a href="{{ url_for('ajouter_medicament_pharmacie') }}" class="btn btn-primary">
+          <i class="ri-add-line me-1"></i>Ajouter un médicament
+        </a>
+      </div>
+
+      <div class="card-body table-responsive">
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-3"
+          role="alert">
+          <i class="ri-error-warning-line me-2"></i>{{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom</th>
+              <th>Catégorie</th>
+              <th>Forme</th>
+              <th>Dosage</th>
+              <th>Prix</th>
+              <th>Stock</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for medicament in medicaments %}
+            <tr>
+              <td>#{{ medicament.id }}</td>
+              <td>
+                <i class="ri-medicine-bottle-line text-primary me-2"></i>
+                <strong>{{ medicament.nom }}</strong>
+              </td>
+              <td>
+                {% if medicament.categorie_nom %}
+                  <span class="badge bg-primary-light text-primary">{{ medicament.categorie_nom }}</span>
+                {% else %}
+                  <span class="badge bg-secondary">Non défini</span>
+                {% endif %}
+              </td>
+              <td>{{ medicament.forme or '-' }}</td>
+              <td>{{ medicament.dosage or '-' }}</td>
+              <td>{{ "%.2f"|format(medicament.prix_unitaire) }} FCFA</td>
+              <td>
+                <span class="badge {% if medicament.statut_stock == 'alerte' %}bg-danger{% elif medicament.statut_stock == 'attention' %}bg-warning{% else %}bg-success{% endif %}-light text-{{ 'danger' if medicament.statut_stock == 'alerte' else 'warning' if medicament.statut_stock == 'attention' else 'success' }}">
+                  {{ medicament.quantite_stock }}
+                </span>
+              </td>
+              <td>
+                {% if medicament.statut_stock == 'alerte' %}
+                  <span class="badge bg-danger">
+                    <i class="ri-alert-line me-1"></i>Stock faible
+                  </span>
+                {% elif medicament.statut_stock == 'attention' %}
+                  <span class="badge bg-warning">
+                    <i class="ri-alert-line me-1"></i>Attention
+                  </span>
+                {% else %}
+                  <span class="badge bg-success">
+                    <i class="ri-check-line me-1"></i>Normal
+                  </span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="d-inline-flex gap-1">
+                  <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                    data-id="{{ medicament.id }}" data-nom="{{ medicament.nom }}" onclick="updateDeleteLinkMedicament(this)">
+                    <i class="ri-delete-bin-line"></i>
+                  </button>
+                  <a href="{{ url_for('modifier_medicament_pharmacie', medicament_id=medicament.id) }}"
+                    class="btn btn-outline-success btn-sm">
+                    <i class="ri-edit-box-line"></i>
+                  </a>
+                  <a href="{{ url_for('voir_medicament_pharmacie', medicament_id=medicament.id) }}"
+                    class="btn btn-outline-info btn-sm">
+                    <i class="ri-eye-line"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="9" class="text-center text-muted py-4">
+                <i class="ri-medicine-bottle-line fs-4 d-block mb-2"></i>
+                Aucun médicament trouvé.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal suppression -->
+<div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalDeleteLabel">Confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir supprimer le médicament "<span id="medicamentNom"></span>" ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+        <a href="#" id="confirmDeleteBtn" class="btn btn-danger">Oui</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function updateDeleteLinkMedicament(button) {
+    const id = button.getAttribute("data-id");
+    const nom = button.getAttribute("data-nom");
+    const deleteUrl = `/admin/pharmacie/medicament/${id}/supprimer`;
+    
+    document.getElementById("medicamentNom").textContent = nom;
+    document.getElementById("confirmDeleteBtn").setAttribute("href", deleteUrl);
+  }
+</script>
+
+{% endblock %}

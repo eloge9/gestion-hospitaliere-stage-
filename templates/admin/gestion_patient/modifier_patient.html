@@ -1,6 +1,526 @@
-{%extends 'admin/base_admin.html' %}
+{% extends "admin/base_admin.html" %}
+{% block content %}
 
-{% block content%}
+<div class="app-container">
+    <!-- App hero header -->
+    <div class="app-hero-header d-flex align-items-center">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="{{ url_for('liste_patient_admin') }}">Liste des Patients</a>
+            </li>
+            <li class="breadcrumb-item text-primary" aria-current="page">
+                Modifier le Patient
+            </li>
+        </ol>
+    </div>
 
+    <!-- App body -->
+    <div class="app-body">
+        <div class="row gx-3">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="ri-edit-line me-2"></i>Modifier le Patient : {{ patient.nom }} {{ patient.prenom
+                            }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('admin_modifier_patient', patient_id=patient.id) }}" method="POST">
+                            <!-- Flash messages -->
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %} {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-3"
+                                role="alert">
+                                <i class="ri-error-warning-line me-2"></i>{{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% endfor %} {% endif %} {% endwith %}
 
-{%endblock%}
+                            <!-- ===== INFORMATIONS DU PATIENT ===== -->
+                            <div class="row gx-3 mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-primary mb-3">
+                                        <i class="ri-user-line me-2"></i>Informations du Patient
+                                    </h6>
+                                </div>
+                            </div>
+
+                            <div class="row gx-3">
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nom <span class="text-danger">*</span></label>
+                                        <input type="text" name="nom" class="form-control" placeholder="Entrez le nom"
+                                            value="{{ patient.nom }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Prénom <span class="text-danger">*</span></label>
+                                        <input type="text" name="prenom" class="form-control"
+                                            placeholder="Entrez le prénom" value="{{ patient.prenom }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Profession</label>
+                                        <input type="text" name="profession" class="form-control"
+                                            placeholder="Profession du patient" value="{{ patient.profession or '' }}">
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Date de Naissance <span
+                                                class="text-danger">*</span></label>
+                                        <input type="date" name="date_naissance" class="form-control"
+                                            value="{{ patient.date_naissance.strftime('%Y-%m-%d') if patient.date_naissance else '' }}"
+                                            required>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Sexe <span class="text-danger">*</span></label>
+                                        <div class="mt-2">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="sexe" id="genreM"
+                                                    value="Homme" {{ 'checked' if patient.sexe=='Homme' }}>
+                                                <label class="form-check-label" for="genreM">Masculin</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="sexe" id="genreF"
+                                                    value="Femme" {{ 'checked' if patient.sexe=='Femme' }}>
+                                                <label class="form-check-label" for="genreF">Féminin</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Téléphone <span class="text-danger">*</span></label>
+                                        <input type="text" name="tel" class="form-control"
+                                            placeholder="Numéro de téléphone" value="{{ patient.numero_telephone }}"
+                                            required>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Ville <span class="text-danger">*</span></label>
+                                        <input type="text" name="ville" class="form-control" placeholder="Ex : Lomé"
+                                            value="{{ patient.ville }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Adresse</label>
+                                        <input type="text" name="adresse" class="form-control"
+                                            placeholder="Entrez l'adresse" value="{{ patient.adresse or '' }}">
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input type="email" name="email" class="form-control"
+                                            placeholder="Entrez l'email" value="{{ patient.email_patient }}" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== PERSONNES À PRÉVENIR EXISTANTES ===== -->
+                            <div class="row gx-3 mb-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">
+                                                <i class="ri-user-heart-line me-2"></i>Personnes à prévenir
+                                                <span class="badge bg-primary-light text-primary ms-2">{{
+                                                    personnes_a_prevenir|length }}</span>
+                                            </h6>
+                                            <button type="button" class="btn btn-sm btn-primary"
+                                                onclick="ajouterPersonne()">
+                                                <i class="ri-add-line"></i> Ajouter une personne
+                                            </button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="personnesContainer">
+                                                <!-- Afficher les personnes existantes -->
+                                                {% for personne in personnes_a_prevenir %}
+                                                <div class="personne-item border rounded p-3 mb-3 position-relative">
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2"
+                                                        onclick="supprimerPersonne(this)">
+                                                        <i class="ri-close-line"></i>
+                                                    </button>
+                                                    <div class="row gx-3">
+                                                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Nom <span
+                                                                        class="text-danger">*</span></label>
+                                                                <input type="text"
+                                                                    name="personnes[{{ loop.index0 }}][nom]"
+                                                                    class="form-control"
+                                                                    placeholder="Nom de la personne"
+                                                                    value="{{ personne.nom }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Prénom <span
+                                                                        class="text-danger">*</span></label>
+                                                                <input type="text"
+                                                                    name="personnes[{{ loop.index0 }}][prenom]"
+                                                                    class="form-control"
+                                                                    placeholder="Prénom de la personne"
+                                                                    value="{{ personne.prenom }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Profession</label>
+                                                                <input type="text"
+                                                                    name="personnes[{{ loop.index0 }}][profession]"
+                                                                    class="form-control" placeholder="Profession"
+                                                                    value="{{ personne.profession or '' }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Téléphone <span
+                                                                        class="text-danger">*</span></label>
+                                                                <input type="text"
+                                                                    name="personnes[{{ loop.index0 }}][telephone]"
+                                                                    class="form-control"
+                                                                    placeholder="Numéro de téléphone"
+                                                                    value="{{ personne.telephone }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Type de personne</label>
+                                                                <select
+                                                                    name="personnes[{{ loop.index0 }}][type_personne]"
+                                                                    class="form-control"
+                                                                    onchange="toggleAutrePersonne({{ loop.index0 }}, this.value)">
+                                                                    <option value="">Sélectionner...</option>
+                                                                    <option value="parent" {{ 'selected' if
+                                                                        personne.type_personne=='parent' }}>Parent
+                                                                    </option>
+                                                                    <option value="conjoint" {{ 'selected' if
+                                                                        personne.type_personne=='conjoint' }}>Conjoint
+                                                                    </option>
+                                                                    <option value="ami" {{ 'selected' if
+                                                                        personne.type_personne=='ami' }}>Ami(e)</option>
+                                                                    <option value="collegue" {{ 'selected' if
+                                                                        personne.type_personne=='collegue' }}>Collègue
+                                                                    </option>
+                                                                    <option value="autre" {{ 'selected' if
+                                                                        personne.type_personne=='autre' }}>Autre
+                                                                    </option>
+                                                                </select>
+                                                                {% if personne.type_personne == 'autre' %}
+                                                                <input type="text"
+                                                                    name="personnes[{{ loop.index0 }}][type_personne_autre]"
+                                                                    class="form-control mt-2"
+                                                                    placeholder="Préciser le type..."
+                                                                    value="{{ personne.type_personne }}"
+                                                                    id="typePersonneAutre{{ loop.index0 }}">
+                                                                {% else %}
+                                                                <input type="text"
+                                                                    name="personnes[{{ loop.index0 }}][type_personne_autre]"
+                                                                    class="form-control mt-2"
+                                                                    placeholder="Préciser le type..."
+                                                                    style="display:none;"
+                                                                    id="typePersonneAutre{{ loop.index0 }}">
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== ASSURANCES EXISTANTES ===== -->
+                            <div class="row gx-3 mb-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">
+                                                <i class="ri-shield-check-line me-2"></i>Assurances
+                                                <span class="badge bg-success-light text-success ms-2">{{
+                                                    assurances|length }}</span>
+                                            </h6>
+                                            <button type="button" class="btn btn-sm btn-primary"
+                                                onclick="ajouterAssurance()">
+                                                <i class="ri-add-line"></i> Ajouter une assurance
+                                            </button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="assurancesContainer">
+                                                <!-- Afficher les assurances existantes -->
+                                                {% for assurance in assurances %}
+                                                <div class="assurance-item border rounded p-3 mb-3 position-relative">
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2"
+                                                        onclick="supprimerAssurance(this)">
+                                                        <i class="ri-close-line"></i>
+                                                    </button>
+                                                    <div class="row gx-3">
+                                                        <div class="col-xxl-4 col-lg-6 col-sm-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Type d'assurance <span
+                                                                        class="text-danger">*</span></label>
+                                                                <select
+                                                                    name="assurances[{{ loop.index0 }}][type_assurance]"
+                                                                    class="form-control" required
+                                                                    onchange="toggleAutreAssurance({{ loop.index0 }}, this.value)">
+                                                                    <option value="">Sélectionner...</option>
+                                                                    <option value="cnss" {{ 'selected' if
+                                                                        assurance.type_assurance=='cnss' }}>CNSS
+                                                                    </option>
+                                                                    <option value="amu" {{ 'selected' if
+                                                                        assurance.type_assurance=='amu' }}>AMU</option>
+                                                                    <option value="inam" {{ 'selected' if
+                                                                        assurance.type_assurance=='inam' }}>INAM
+                                                                    </option>
+                                                                    <option value="sunu" {{ 'selected' if
+                                                                        assurance.type_assurance=='sunu' }}>SUNU
+                                                                        Assurances</option>
+                                                                    <option value="sanlam" {{ 'selected' if
+                                                                        assurance.type_assurance=='sanlam' }}>Sanlam
+                                                                    </option>
+                                                                    <option value="nsia" {{ 'selected' if
+                                                                        assurance.type_assurance=='nsia' }}>NSIA
+                                                                        Assurances</option>
+                                                                    <option value="privee" {{ 'selected' if
+                                                                        assurance.type_assurance=='privee' }}>Assurance
+                                                                        Privée</option>
+                                                                    <option value="mutuelle" {{ 'selected' if
+                                                                        assurance.type_assurance=='mutuelle' }}>Mutuelle
+                                                                    </option>
+                                                                    <option value="autre" {{ 'selected' if
+                                                                        assurance.type_assurance=='autre' }}>Autre
+                                                                    </option>
+                                                                </select>
+                                                                {% if assurance.type_assurance == 'autre' %}
+                                                                <input type="text"
+                                                                    name="assurances[{{ loop.index0 }}][type_assurance_autre]"
+                                                                    class="form-control mt-2"
+                                                                    placeholder="Préciser le type d'assurance..."
+                                                                    value="{{ assurance.type_assurance }}"
+                                                                    id="typeAssuranceAutre{{ loop.index0 }}">
+                                                                {% else %}
+                                                                <input type="text"
+                                                                    name="assurances[{{ loop.index0 }}][type_assurance_autre]"
+                                                                    class="form-control mt-2"
+                                                                    placeholder="Préciser le type d'assurance..."
+                                                                    style="display:none;"
+                                                                    id="typeAssuranceAutre{{ loop.index0 }}">
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xxl-4 col-lg-6 col-sm-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Numéro d'assurance <span
+                                                                        class="text-danger">*</span></label>
+                                                                <input type="text"
+                                                                    name="assurances[{{ loop.index0 }}][numero_assurance]"
+                                                                    class="form-control"
+                                                                    placeholder="Numéro d'assurance"
+                                                                    value="{{ assurance.numero_assurance }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xxl-4 col-lg-6 col-sm-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Pourcentage (%)</label>
+                                                                <input type="number"
+                                                                    name="assurances[{{ loop.index0 }}][pourcentage]"
+                                                                    class="form-control" placeholder="Ex: 80" min="0"
+                                                                    max="100" step="0.01"
+                                                                    value="{{ assurance.pourcentage or '' }}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ===== BOUTONS ===== -->
+                            <div class="row gx-3">
+                                <div class="col-sm-12">
+                                    <div class="d-flex gap-2 justify-content-end mt-4">
+                                        <a href="{{ url_for('admin_voir_patient', patient_id=patient.id) }}"
+                                            class="btn btn-outline-secondary">
+                                            <i class="ri-arrow-left-line me-1"></i>Annuler
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="ri-save-line me-1"></i>Enregistrer les modifications
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- App body ends -->
+</div>
+
+<script>
+    // Variables globales pour compter les éléments
+    let personneIndex = {{ personnes_a_prevenir| length }};
+    let assuranceIndex = {{ assurances| length }};
+
+    // Fonction pour ajouter une personne à prévenir
+    function ajouterPersonne() {
+        const container = document.getElementById('personnesContainer');
+        const personneDiv = document.createElement('div');
+        personneDiv.className = 'personne-item border rounded p-3 mb-3 position-relative';
+        personneDiv.innerHTML = `
+      <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" onclick="supprimerPersonne(this)">
+        <i class="ri-close-line"></i>
+      </button>
+      <div class="row gx-3">
+        <div class="col-xxl-3 col-lg-4 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Nom <span class="text-danger">*</span></label>
+            <input type="text" name="personnes[${personneIndex}][nom]" class="form-control" placeholder="Nom de la personne" required>
+          </div>
+        </div>
+        <div class="col-xxl-3 col-lg-4 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Prénom <span class="text-danger">*</span></label>
+            <input type="text" name="personnes[${personneIndex}][prenom]" class="form-control" placeholder="Prénom de la personne" required>
+          </div>
+        </div>
+        <div class="col-xxl-3 col-lg-4 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Profession</label>
+            <input type="text" name="personnes[${personneIndex}][profession]" class="form-control" placeholder="Profession">
+          </div>
+        </div>
+        <div class="col-xxl-3 col-lg-4 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Téléphone <span class="text-danger">*</span></label>
+            <input type="text" name="personnes[${personneIndex}][telephone]" class="form-control" placeholder="Numéro de téléphone" required>
+          </div>
+        </div>
+        <div class="col-xxl-3 col-lg-4 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Type de personne</label>
+            <select name="personnes[${personneIndex}][type_personne]" class="form-control" onchange="toggleAutrePersonne(${personneIndex}, this.value)">
+              <option value="">Sélectionner...</option>
+              <option value="parent">Parent</option>
+              <option value="conjoint">Conjoint</option>
+              <option value="ami">Ami(e)</option>
+              <option value="collegue">Collègue</option>
+              <option value="autre">Autre</option>
+            </select>
+            <input type="text" name="personnes[${personneIndex}][type_personne_autre]" class="form-control mt-2" placeholder="Préciser le type..." style="display:none;" id="typePersonneAutre${personneIndex}">
+          </div>
+        </div>
+      </div>
+    `;
+        container.appendChild(personneDiv);
+        personneIndex++;
+    }
+
+    // Fonction pour ajouter une assurance
+    function ajouterAssurance() {
+        const container = document.getElementById('assurancesContainer');
+        const assuranceDiv = document.createElement('div');
+        assuranceDiv.className = 'assurance-item border rounded p-3 mb-3 position-relative';
+        assuranceDiv.innerHTML = `
+      <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" onclick="supprimerAssurance(this)">
+        <i class="ri-close-line"></i>
+      </button>
+      <div class="row gx-3">
+        <div class="col-xxl-4 col-lg-6 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Type d'assurance <span class="text-danger">*</span></label>
+            <select name="assurances[${assuranceIndex}][type_assurance]" class="form-control" required onchange="toggleAutreAssurance(${assuranceIndex}, this.value)">
+              <option value="">Sélectionner...</option>
+              <option value="cnss">CNSS</option>
+              <option value="amu">AMU</option>
+              <option value="inam">INAM</option>
+              <option value="sunu">SUNU Assurances</option>
+              <option value="sanlam">Sanlam</option>
+              <option value="nsia">NSIA Assurances</option>
+              <option value="privee">Assurance Privée</option>
+              <option value="mutuelle">Mutuelle</option>
+              <option value="autre">Autre</option>
+            </select>
+            <input type="text" name="assurances[${assuranceIndex}][type_assurance_autre]" class="form-control mt-2" placeholder="Préciser le type d'assurance..." style="display:none;" id="typeAssuranceAutre${assuranceIndex}">
+          </div>
+        </div>
+        <div class="col-xxl-4 col-lg-6 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Numéro d'assurance <span class="text-danger">*</span></label>
+            <input type="text" name="assurances[${assuranceIndex}][numero_assurance]" class="form-control" placeholder="Numéro d'assurance" required>
+          </div>
+        </div>
+        <div class="col-xxl-4 col-lg-6 col-sm-6">
+          <div class="mb-3">
+            <label class="form-label">Pourcentage (%)</label>
+            <input type="number" name="assurances[${assuranceIndex}][pourcentage]" class="form-control" placeholder="Ex: 80" min="0" max="100" step="0.01">
+          </div>
+        </div>
+      </div>
+    `;
+        container.appendChild(assuranceDiv);
+        assuranceIndex++;
+    }
+
+    // Fonctions pour supprimer des éléments
+    function supprimerPersonne(btn) {
+        btn.closest('.personne-item').remove();
+    }
+
+    function supprimerAssurance(btn) {
+        btn.closest('.assurance-item').remove();
+    }
+
+    // Fonctions pour gérer l'affichage des champs "Autre"
+    function toggleAutrePersonne(index, value) {
+        const field = document.getElementById(`typePersonneAutre${index}`);
+        if (value === 'autre') {
+            field.style.display = 'block';
+            field.setAttribute('required', 'required');
+        } else {
+            field.style.display = 'none';
+            field.removeAttribute('required');
+            field.value = '';
+        }
+    }
+
+    function toggleAutreAssurance(index, value) {
+        const field = document.getElementById(`typeAssuranceAutre${index}`);
+        if (value === 'autre') {
+            field.style.display = 'block';
+            field.setAttribute('required', 'required');
+        } else {
+            field.style.display = 'none';
+            field.removeAttribute('required');
+            field.value = '';
+        }
+    }
+</script>
+
+{% endblock %}

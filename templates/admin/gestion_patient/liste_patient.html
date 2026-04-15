@@ -1,6 +1,118 @@
-{%extends 'admin/base_admin.html' %}
+{% extends "admin/base_admin.html" %} {% block content %}
+<div class="app-container">
+  <div class="app-hero-header d-flex align-items-center">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+        <a href="{{ url_for('index') }}">Admin</a>
+      </li>
+      <li class="breadcrumb-item text-primary" aria-current="page">
+        Liste des patients
+      </li>
+    </ol>
+  </div>
 
-{% block content%}
+  <div class="app-body">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title">Liste des patients</h5>
+        <a href="{{ url_for('signup_patient_admin') }}" class="btn btn-primary">
+          <i class="ri-user-add-line me-1"></i>Ajouter un patient
+        </a>
+      </div>
 
+      <div class="card-body table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom complet</th>
+              <th>Email</th>
+              <th>Téléphone</th>
+              <th>Sexe</th>
+              <th>Ville</th>
+              <th>Date d'inscription</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for patient in patients %}
+            <tr>
+              <td>#{{ patient.id }}</td>
+              <td>
+                <i class="ri-heart-pulse-line text-primary me-2"></i>
+                {{ patient.nom }} {{ patient.prenom }}
+              </td>
+              <td>{{ patient.email_patient }}</td>
+              <td>{{ patient.numero_telephone or "Non défini" }}</td>
+              <td>
+                {% if patient.sexe == "Homme" %}
+                <span class="badge bg-primary-subtle text-primary">
+                  <i class="ri-men-line me-1"></i>Homme
+                </span>
+                {% elif patient.sexe == "Femme" %}
+                <span class="badge bg-danger-subtle text-danger">
+                  <i class="ri-women-line me-1"></i>Femme
+                </span>
+                {% else %}
+                <span class="badge bg-secondary-subtle text-secondary">Non défini</span>
+                {% endif %}
+              </td>
+              <td>{{ patient.ville or "Non défini" }}</td>
+              <td>
+                {{ patient.date_inscription.strftime('%d/%m/%Y') if
+                patient.date_inscription else "—" }}
+              </td>
+              <td>
+                <div class="d-inline-flex gap-1">
+                  <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                    data-id="{{ patient.id }}" onclick="updateDeleteLinkPatient(this)">
+                    <i class="ri-delete-bin-line"></i>
+                  </button>
+                  <a href="{{ url_for('admin_modifier_patient', patient_id=patient.id) }}"
+                    class="btn btn-outline-success btn-sm">
+                    <i class="ri-edit-box-line"></i>
+                  </a>
+                  <a href="{{ url_for('admin_voir_patient', patient_id=patient.id) }}"
+                    class="btn btn-outline-info btn-sm">
+                    <i class="ri-eye-line"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="8" class="text-center text-muted py-4">
+                <i class="ri-user-search-line fs-4 d-block mb-2"></i>
+                Aucun patient trouvé.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-{%endblock%}
+</div>
+
+<!-- Modal suppression -->
+<div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalDeleteLabel">Confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir supprimer ce patient ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+        <a href="#" id="confirmDeleteBtn" class="btn btn-danger">Oui</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
