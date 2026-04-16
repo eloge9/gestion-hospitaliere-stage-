@@ -1,0 +1,241 @@
+{% extends "admin/base_admin.html" %}
+{% block content %}
+
+<style>
+  .cycle-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-left: 4px solid #667eea;
+  }
+
+  .cycle-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .cycle-termine {
+    border-left-color: #28a745;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  }
+
+  .statut-badge {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .action-card {
+    transition: all 0.3s ease;
+    border: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .montant-total {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #667eea;
+  }
+</style>
+
+<div class="app-container">
+  <div class="app-hero-header d-flex align-items-center">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+        <a href="{{ url_for('index') }}">Admin</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('liste_patient_admin') }}">Liste des Patients</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('admin_gestion_patient', patient_id=patient.id) }}">Gestion Patient</a>
+      </li>
+      <li class="breadcrumb-item text-primary" aria-current="page">
+        Facturation
+      </li>
+    </ol>
+  </div>
+
+  <div class="app-body">
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-3"
+      role="alert">
+      <i class="ri-error-warning-line me-2"></i>{{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %} {% endif %} {% endwith %}
+
+    <!-- Infos patient -->
+    <div class="card patient-info-card mb-4">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center">
+            <div
+              class="avatar-lg bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3">
+              <i class="ri-user-3-line text-primary fs-2"></i>
+            </div>
+            <div>
+              <h4 class="mb-1">{{ patient.nom }} {{ patient.prenom }}</h4>
+              <p class="text-muted mb-0">ID: #{{ patient.id }}</p>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            {% if assurances %}
+            <span class="badge bg-success-subtle text-success statut-badge">
+              <i class="ri-shield-check-line me-1"></i>{{ assurances|length }} Assurance(s)
+            </span>
+            {% else %}
+            <span class="badge bg-warning-subtle text-warning statut-badge">
+              <i class="ri-shield-line me-1"></i>Aucune assurance
+            </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="row mb-4">
+      <div class="col-md-4 mb-3">
+        <div class="card action-card h-100"
+          onclick="window.location.href='{{ url_for('ajouter_facture', patient_id=patient.id) }}'">
+          <div class="card-body text-center">
+            <i class="ri-file-add-line" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+            <h5 class="card-title">Nouvelle Facture</h5>
+            <p class="card-text small">Créer une nouvelle facture journalière</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-3">
+        <div class="card action-card h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+          <div class="card-body text-center">
+            <i class="ri-history-line" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+            <h5 class="card-title">Historique</h5>
+            <p class="card-text small">Voir tous les cycles de facturation</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-3">
+        <div class="card action-card h-100" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"
+          onclick="window.location.href='{{ url_for('statistiques_facturation', patient_id=patient.id) }}'; return false;">
+          <div class="card-body text-center">
+            <i class="ri-calculator-line" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+            <h5 class="card-title">Statistiques</h5>
+            <p class="card-text small">Analyser les coûts et remboursements</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-3">
+        <div class="card action-card h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"
+          onclick="window.location.href='{{ url_for('historique_facturation', patient_id=patient.id) }}'; return false;">
+          <div class="card-body text-center">
+            <i class="ri-history-line" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+            <h5 class="card-title">Historique</h5>
+            <p class="card-text small">Voir toutes les factures et cycles</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des cycles -->
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title">
+          <i class="ri-file-list-3-line me-2"></i>Cycles de Facturation
+        </h5>
+        <span class="badge bg-primary-subtle text-primary">{{ cycles|length }} cycle(s)</span>
+      </div>
+      <div class="card-body">
+        {% if cycles %}
+        <div class="row">
+          {% for cycle in cycles %}
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card cycle-card {{ 'cycle-termine' if cycle.statut_cycle == 'TERMINE' }}">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div>
+                    <h6 class="card-title mb-1">{{ cycle.cycle_id }}</h6>
+                    <small class="text-muted">{{ cycle.nb_factures }} facture(s)</small>
+                  </div>
+                  <span
+                    class="badge {{ 'bg-success-subtle text-success' if cycle.statut_cycle == 'TERMINE' else 'bg-primary-subtle text-primary' }} statut-badge">
+                    {{ cycle.statut_cycle }}
+                  </span>
+                </div>
+
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between mb-1">
+                    <small class="text-muted">Période:</small>
+                    <small>{{ cycle.date_debut_cycle.strftime('%d/%m/%Y') }} - {{
+                      cycle.date_fin_cycle.strftime('%d/%m/%Y') if cycle.date_fin_cycle else '...' }}</small>
+                  </div>
+                  <div class="d-flex justify-content-between mb-1">
+                    <small class="text-muted">Total:</small>
+                    <strong class="montant-total">{{ "{:,.0f}".format(cycle.total_cycle or 0) }} FCFA</strong>
+                  </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                  <a href="{{ url_for('details_cycle', patient_id=patient.id, cycle_id=cycle.cycle_id) }}"
+                    class="btn btn-outline-primary btn-sm flex-fill">
+                    <i class="ri-eye-line me-1"></i>Voir
+                  </a>
+                  {% if cycle.statut_cycle == 'EN_COURS' %}
+                  <button class="btn btn-outline-success btn-sm"
+                    onclick="terminerCycle('{{ patient.id }}', '{{ cycle.cycle_id }}')">
+                    <i class="ri-lock-line me-1"></i>Terminer
+                  </button>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+          <i class="ri-file-text-line text-muted" style="font-size: 4rem;"></i>
+          <h5 class="text-muted mt-3">Aucun cycle de facturation</h5>
+          <p class="text-muted">Commencez par créer votre première facture</p>
+          <a href="{{ url_for('ajouter_facture', patient_id=patient.id) }}" class="btn btn-primary">
+            <i class="ri-file-add-line me-1"></i>Créer une facture
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Boutons de navigation -->
+    <div class="d-flex gap-2 justify-content-end mt-4">
+      <a href="{{ url_for('admin_gestion_patient', patient_id=patient.id) }}" class="btn btn-outline-secondary">
+        <i class="ri-arrow-left-line me-1"></i>Retour à la gestion
+      </a>
+      <a href="{{ url_for('liste_patient_admin') }}" class="btn btn-outline-primary">
+        <i class="ri-list-line me-1"></i>Liste des patients
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function terminerCycle(patientId, cycleId) {
+    if (confirm('Êtes-vous sûr de vouloir terminer ce cycle ?\n\nUne fois terminé, aucune modification ne sera plus possible.')) {
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = `/admin/patient/${patientId}/cycle/${cycleId}/terminer`;
+      document.body.appendChild(form);
+      form.submit();
+    }
+  }
+</script>
+
+{% endblock %}

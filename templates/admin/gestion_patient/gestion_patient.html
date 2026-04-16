@@ -127,6 +127,17 @@
           </div>
         </div>
       </div>
+
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card action-card h-100" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"
+          onclick="window.location.href='{{ url_for('facturation_patient', patient_id=patient.id) }}'; return false;">
+          <div class="card-body text-center">
+            <i class="ri-file-list-3-line action-icon"></i>
+            <h5 class="card-title">Facturation</h5>
+            <p class="card-text small">Gérer les factures et cycles</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Informations détaillées -->

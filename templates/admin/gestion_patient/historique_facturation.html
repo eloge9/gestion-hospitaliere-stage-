@@ -1,0 +1,312 @@
+{% extends "admin/base_admin.html" %}
+{% block content %}
+
+<style>
+.patient-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.stats-card {
+  transition: all 0.3s ease;
+  border: none;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.stats-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.facture-card {
+  transition: all 0.3s ease;
+  border-left: 4px solid #667eea;
+  margin-bottom: 1rem;
+}
+
+.facture-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.facture-terminee {
+  border-left-color: #28a745;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.detail-row {
+  transition: background-color 0.2s ease;
+}
+
+.detail-row:hover {
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+.montant-total {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.badge-statut {
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #667eea;
+}
+
+.timeline-item::after {
+  content: '';
+  position: absolute;
+  left: 0.25rem;
+  top: 1rem;
+  width: 0.1rem;
+  height: calc(100% - 1rem);
+  background: #e9ecef;
+}
+</style>
+
+<div class="app-container">
+  <div class="app-hero-header d-flex align-items-center">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+        <a href="{{ url_for('index') }}">Admin</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('liste_patient_admin') }}">Liste des Patients</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('admin_gestion_patient', patient_id=patient.id) }}">Gestion Patient</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('facturation_patient', patient_id=patient.id) }}">Facturation</a>
+      </li>
+      <li class="breadcrumb-item text-primary" aria-current="page">
+        Historique
+      </li>
+    </ol>
+  </div>
+
+  <div class="app-body">
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-3" role="alert">
+      <i class="ri-error-warning-line me-2"></i>{{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %} {% endif %} {% endwith %}
+
+    <!-- En-tête patient -->
+    <div class="patient-header mb-4">
+      <div class="d-flex align-items-center">
+        <div class="avatar-lg bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center me-3">
+          <i class="ri-user-3-line text-white fs-2"></i>
+        </div>
+        <div>
+          <h4 class="mb-1">{{ patient.nom }} {{ patient.prenom }}</h4>
+          <p class="mb-0">ID: #{{ patient.id }} | Historique complet de facturation</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistiques globales -->
+    <div class="row mb-4">
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stats-card">
+          <div class="d-flex align-items-center">
+            <div class="avatar-sm bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3">
+              <i class="ri-file-list-3-line text-primary"></i>
+            </div>
+            <div>
+              <h6 class="mb-0">{{ factures|length }}</h6>
+              <small class="text-muted">Factures</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stats-card">
+          <div class="d-flex align-items-center">
+            <div class="avatar-sm bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3">
+              <i class="ri-money-dollar-circle-line text-success"></i>
+            </div>
+            <div>
+              <h6 class="mb-0">{{ "{:,.0f}".format(total_general) }}</h6>
+              <small class="text-muted">Total général</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stats-card">
+          <div class="d-flex align-items-center">
+            <div class="avatar-sm bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3">
+              <i class="ri-shield-check-line text-info"></i>
+            </div>
+            <div>
+              <h6 class="mb-0">{{ "{:,.0f}".format(total_assurance) }}</h6>
+              <small class="text-muted">Assurance</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stats-card">
+          <div class="d-flex align-items-center">
+            <div class="avatar-sm bg-warning bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3">
+              <i class="ri-user-line text-warning"></i>
+            </div>
+            <div>
+              <h6 class="mb-0">{{ "{:,.0f}".format(total_patient) }}</h6>
+              <small class="text-muted">Patient</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des factures -->
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title">
+          <i class="ri-history-line me-2"></i>Historique des Factures
+        </h5>
+        <span class="badge bg-primary-subtle text-primary">{{ factures|length }} facture(s)</span>
+      </div>
+      <div class="card-body">
+        {% if factures %}
+          {% for facture_id, facture_data in factures.items() %}
+          <div class="facture-card card {{ 'facture-terminee' if facture_data.info.statut == 'TERMINE' }}">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <h6 class="card-title mb-1">
+                    Facture #{{ facture_data.info.id }}
+                    <small class="text-muted">du {{ facture_data.info.date_facture.strftime('%d/%m/%Y') }}</small>
+                  </h6>
+                  <div class="d-flex gap-2 mb-2">
+                    <span class="badge bg-primary-subtle text-primary badge-statut">
+                      {{ facture_data.info.cycle_id }}
+                    </span>
+                    <span class="badge {{ 'bg-success-subtle text-success' if facture_data.info.statut_paiement == 'paye' else 'bg-warning-subtle text-warning' }} badge-statut">
+                      {{ facture_data.info.statut_paiement }}
+                    </span>
+                    <span class="badge {{ 'bg-success-subtle text-success' if facture_data.info.statut == 'TERMINE' else 'bg-primary-subtle text-primary' }} badge-statut">
+                      {{ facture_data.info.statut }}
+                    </span>
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div class="montant-total">{{ "{:,.0f}".format(facture_data.info.total_general or 0) }} FCFA</div>
+                  {% if facture_data.info.montant_assurance > 0 %}
+                  <small class="text-success">Assurance: {{ "{:,.0f}".format(facture_data.info.montant_assurance) }} FCFA</small><br>
+                  <small class="text-info">Patient: {{ "{:,.0f}".format(facture_data.info.montant_patient) }} FCFA</small>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Détails de la facture -->
+              {% if facture_data.details %}
+              <div class="table-responsive mb-3">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th>Désignation</th>
+                      <th class="text-center">Qté</th>
+                      <th class="text-end">Prix U.</th>
+                      <th class="text-end">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for detail in facture_data.details %}
+                    <tr class="detail-row">
+                      <td>{{ detail.designation }}</td>
+                      <td class="text-center">{{ detail.quantite }}</td>
+                      <td class="text-end">{{ "{:,.0f}".format(detail.prix_unitaire) }}</td>
+                      <td class="text-end">{{ "{:,.0f}".format(detail.montant) }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% endif %}
+
+              <!-- Paiements -->
+              {% if facture_data.paiements %}
+              <div class="mb-3">
+                <h6 class="text-muted mb-2">Paiements:</h6>
+                <div class="timeline">
+                  {% for paiement in facture_data.paiements %}
+                  <div class="timeline-item mb-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <strong>{{ "{:,.0f}".format(paiement.montant_paiement) }} FCFA</strong>
+                        <small class="text-muted d-block">{{ paiement.date_paiement.strftime('%d/%m/%Y') }}</small>
+                      </div>
+                      <span class="badge bg-info-subtle text-info">{{ paiement.mode_paiement }}</span>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
+
+              <!-- Actions -->
+              <div class="d-flex gap-2">
+                <a href="{{ url_for('details_cycle', patient_id=patient.id, cycle_id=facture_data.info.cycle_id) }}" 
+                   class="btn btn-outline-primary btn-sm">
+                  <i class="ri-eye-line me-1"></i>Voir le cycle
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center py-5">
+            <i class="ri-file-text-line text-muted" style="font-size: 4rem;"></i>
+            <h5 class="text-muted mt-3">Aucune facture dans l'historique</h5>
+            <p class="text-muted">Ce patient n'a pas encore de facture</p>
+            <a href="{{ url_for('ajouter_facture', patient_id=patient.id) }}" class="btn btn-primary">
+              <i class="ri-file-add-line me-1"></i>Créer une facture
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="d-flex gap-2 justify-content-end mt-4">
+      <a href="{{ url_for('facturation_patient', patient_id=patient.id) }}" class="btn btn-outline-secondary">
+        <i class="ri-arrow-left-line me-1"></i>Retour à la facturation
+      </a>
+      <a href="{{ url_for('statistiques_facturation', patient_id=patient.id) }}" class="btn btn-outline-primary">
+        <i class="ri-calculator-line me-1"></i>Voir les statistiques
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

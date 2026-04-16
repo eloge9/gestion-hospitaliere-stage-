@@ -1,0 +1,390 @@
+{% extends "admin/base_admin.html" %}
+{% block content %}
+
+<style>
+.patient-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.stats-card {
+  transition: all 0.3s ease;
+  border: none;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 10px;
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.stats-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.big-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.chart-container {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.progress-item {
+  margin-bottom: 1rem;
+}
+
+.progress-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.service-item {
+  transition: all 0.3s ease;
+  border-left: 4px solid #667eea;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.service-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.cycle-card {
+  transition: all 0.3s ease;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.cycle-card:hover {
+  border-color: #667eea;
+  background-color: rgba(102, 126, 234, 0.05);
+}
+
+.badge-stat {
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
+}
+
+.montant-highlight {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #667eea;
+}
+</style>
+
+<div class="app-container">
+  <div class="app-hero-header d-flex align-items-center">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+        <a href="{{ url_for('index') }}">Admin</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('liste_patient_admin') }}">Liste des Patients</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('admin_gestion_patient', patient_id=patient.id) }}">Gestion Patient</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('facturation_patient', patient_id=patient.id) }}">Facturation</a>
+      </li>
+      <li class="breadcrumb-item text-primary" aria-current="page">
+        Statistiques
+      </li>
+    </ol>
+  </div>
+
+  <div class="app-body">
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-3" role="alert">
+      <i class="ri-error-warning-line me-2"></i>{{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %} {% endif %} {% endwith %}
+
+    <!-- En-tête patient -->
+    <div class="patient-header mb-4">
+      <div class="d-flex align-items-center">
+        <div class="avatar-lg bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center me-3">
+          <i class="ri-user-3-line text-white fs-2"></i>
+        </div>
+        <div>
+          <h4 class="mb-1">{{ patient.nom }} {{ patient.prenom }}</h4>
+          <p class="mb-0">ID: #{{ patient.id }} | Statistiques de facturation</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistiques globales -->
+    <div class="row mb-4">
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stats-card">
+          <div class="text-center">
+            <div class="big-number">{{ stats_globales.nb_factures or 0 }}</div>
+            <small class="text-muted">Factures totales</small>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stats-card">
+          <div class="text-center">
+            <div class="big-number">{{ stats_globales.nb_cycles or 0 }}</div>
+            <small class="text-muted">Cycles de traitement</small>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stats-card">
+          <div class="text-center">
+            <div class="big-number">{{ "{:,.0f}".format(stats_globales.total_general or 0) }}</div>
+            <small class="text-muted">Montant total (FCFA)</small>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stats-card">
+          <div class="text-center">
+            <div class="big-number">{{ "{:,.0f}".format(moyennes.moyenne_facture or 0) }}</div>
+            <small class="text-muted">Moyenne/facture (FCFA)</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Répartition des paiements -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="chart-container">
+          <h6 class="mb-3">
+            <i class="ri-money-dollar-circle-line me-2"></i>Répartition des paiements
+          </h6>
+          {% if stats_globales.total_general > 0 %}
+            <div class="progress-item">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="progress-label">Payé</span>
+                <strong>{{ "{:,.0f}".format(stats_globales.total_paye or 0) }} FCFA</strong>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-success" style="width: {{ (stats_globales.total_paye / stats_globales.total_general * 100) if stats_globales.total_general else 0 }}%"></div>
+              </div>
+            </div>
+            
+            <div class="progress-item">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="progress-label">En attente</span>
+                <strong>{{ "{:,.0f}".format(stats_globales.total_en_attente or 0) }} FCFA</strong>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-warning" style="width: {{ (stats_globales.total_en_attente / stats_globales.total_general * 100) if stats_globales.total_general else 0 }}%"></div>
+              </div>
+            </div>
+            
+            <div class="progress-item">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="progress-label">Partiellement payé</span>
+                <strong>{{ "{:,.0f}".format(stats_globales.total_partiel or 0) }} FCFA</strong>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-info" style="width: {{ (stats_globales.total_partiel / stats_globales.total_general * 100) if stats_globales.total_general else 0 }}%"></div>
+              </div>
+            </div>
+          {% else %}
+            <p class="text-muted">Aucune donnée disponible</p>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="chart-container">
+          <h6 class="mb-3">
+            <i class="ri-shield-check-line me-2"></i>Répartition Assurance/Patient
+          </h6>
+          {% if stats_globales.total_general > 0 %}
+            <div class="progress-item">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="progress-label">Assurance</span>
+                <strong>{{ "{:,.0f}".format(stats_globales.total_assurance or 0) }} FCFA</strong>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-info" style="width: {{ (stats_globales.total_assurance / stats_globales.total_general * 100) if stats_globales.total_general else 0 }}%"></div>
+              </div>
+            </div>
+            
+            <div class="progress-item">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="progress-label">Patient</span>
+                <strong>{{ "{:,.0f}".format(stats_globales.total_patient or 0) }} FCFA</strong>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-primary" style="width: {{ (stats_globales.total_patient / stats_globales.total_general * 100) if stats_globales.total_general else 0 }}%"></div>
+              </div>
+            </div>
+          {% else %}
+            <p class="text-muted">Aucune donnée disponible</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Services les plus fréquents -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="chart-container">
+          <h6 class="mb-3">
+            <i class="ri-service-line me-2"></i>Services les plus fréquents
+          </h6>
+          {% if services_frequents %}
+            {% for service in services_frequents %}
+            <div class="service-item">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{ service.designation }}</strong>
+                  <small class="text-muted d-block">{{ service.frequence }} fois | Total: {{ service.total_quantite }} unités</small>
+                </div>
+                <div class="text-end">
+                  <div class="montant-highlight">{{ "{:,.0f}".format(service.total_montant) }} FCFA</div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted">Aucun service enregistré</p>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="chart-container">
+          <h6 class="mb-3">
+            <i class="ri-calendar-line me-2"></i>Évolution mensuelle
+          </h6>
+          {% if evolution_mensuelle %}
+            {% for mois in evolution_mensuelle %}
+            <div class="cycle-card">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{ mois.mois }}</strong>
+                  <small class="text-muted d-block">{{ mois.nb_factures }} facture(s)</small>
+                </div>
+                <div class="text-end">
+                  <div class="montant-highlight">{{ "{:,.0f}".format(mois.total_mois) }} FCFA</div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted">Aucune donnée mensuelle</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistiques par cycle -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="chart-container">
+          <h6 class="mb-3">
+            <i class="ri-file-list-3-line me-2"></i>Statistiques par cycle
+          </h6>
+          {% if stats_cycles %}
+            <div class="row">
+              {% for cycle in stats_cycles %}
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="cycle-card">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                      <strong>{{ cycle.cycle_id }}</strong>
+                      <small class="text-muted d-block">
+                        {{ cycle.date_debut.strftime('%d/%m/%Y') }} - {{ cycle.date_fin.strftime('%d/%m/%Y') if cycle.date_fin else '...' }}
+                      </small>
+                    </div>
+                    <span class="badge {{ 'bg-success-subtle text-success' if cycle.statut_cycle == 'TERMINE' else 'bg-primary-subtle text-primary' }} badge-stat">
+                      {{ cycle.statut_cycle }}
+                    </span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <small class="text-muted">{{ cycle.nb_factures }} factures</small>
+                    </div>
+                    <div class="text-end">
+                      <div class="montant-highlight">{{ "{:,.0f}".format(cycle.total_cycle) }} FCFA</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-muted">Aucun cycle de traitement</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Résumé financier -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="chart-container">
+          <h6 class="mb-3">
+            <i class="ri-calculator-line me-2"></i>Résumé financier
+          </h6>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="text-center">
+                <div class="montant-highlight">{{ "{:,.0f}".format(moyennes.min_facture or 0) }} FCFA</div>
+                <small class="text-muted">Facture minimum</small>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-center">
+                <div class="montant-highlight">{{ "{:,.0f}".format(moyennes.max_facture or 0) }} FCFA</div>
+                <small class="text-muted">Facture maximum</small>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-center">
+                <div class="montant-highlight">{{ "{:,.0f}".format(moyennes.moyenne_facture or 0) }} FCFA</div>
+                <small class="text-muted">Facture moyenne</small>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-center">
+                <div class="montant-highlight">{{ "{:,.0f}".format(stats_globales.total_general or 0) }} FCFA</div>
+                <small class="text-muted">Total cumulé</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="d-flex gap-2 justify-content-end mt-4">
+      <a href="{{ url_for('facturation_patient', patient_id=patient.id) }}" class="btn btn-outline-secondary">
+        <i class="ri-arrow-left-line me-1"></i>Retour à la facturation
+      </a>
+      <a href="{{ url_for('historique_facturation', patient_id=patient.id) }}" class="btn btn-outline-primary">
+        <i class="ri-history-line me-1"></i>Voir l'historique
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

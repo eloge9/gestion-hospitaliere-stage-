@@ -12,6 +12,7 @@ from modules.admin import init_admin
 from modules.patient import init_patient
 from modules.docteur import init_docteur
 from modules.pharmacie import init_pharmacie
+from modules.facturation import init_facturation
 
 # Initialisation de l'application
 app = Flask(__name__)
@@ -43,6 +44,7 @@ init_admin(app, mysql, mail)
 init_patient(app, mysql, mail)
 init_docteur(app, mysql)
 init_pharmacie(app, mysql)
+init_facturation(app, mysql)
 
 if __name__ == "__main__":
     app.run(debug=True)

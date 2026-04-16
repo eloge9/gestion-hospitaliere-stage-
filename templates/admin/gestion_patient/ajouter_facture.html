@@ -1,0 +1,221 @@
+{% extends "admin/base_admin.html" %}
+{% block content %}
+
+<style>
+.form-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 10px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.cycle-option {
+  transition: all 0.3s ease;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  padding: 1.5rem;
+  cursor: pointer;
+}
+
+.cycle-option:hover {
+  border-color: #667eea;
+  background-color: rgba(102, 126, 234, 0.05);
+}
+
+.cycle-option.selected {
+  border-color: #667eea;
+  background-color: rgba(102, 126, 234, 0.1);
+}
+
+.patient-info {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+</style>
+
+<div class="app-container">
+  <div class="app-hero-header d-flex align-items-center">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+        <a href="{{ url_for('index') }}">Admin</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('liste_patient_admin') }}">Liste des Patients</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('admin_gestion_patient', patient_id=patient.id) }}">Gestion Patient</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('facturation_patient', patient_id=patient.id) }}">Facturation</a>
+      </li>
+      <li class="breadcrumb-item text-primary" aria-current="page">
+        Ajouter une facture
+      </li>
+    </ol>
+  </div>
+
+  <div class="app-body">
+    <!-- Infos patient -->
+    <div class="patient-info mb-4">
+      <div class="d-flex align-items-center">
+        <div class="avatar-lg bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center me-3">
+          <i class="ri-user-3-line text-white fs-2"></i>
+        </div>
+        <div>
+          <h4 class="mb-1">{{ patient.nom }} {{ patient.prenom }}</h4>
+          <p class="mb-0">ID: #{{ patient.id }} | Créer une nouvelle facture</p>
+        </div>
+      </div>
+    </div>
+
+    <form method="POST" class="needs-validation" novalidate>
+      <!-- Section Cycle -->
+      <div class="form-section">
+        <h5 class="mb-4">
+          <i class="ri-file-list-3-line me-2"></i>Cycle de Facturation
+        </h5>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="cycle-option" onclick="selectCycleOption('existing')">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="cycle_option" 
+                       id="existing_cycle" value="existing" checked>
+                <label class="form-check-label" for="existing_cycle">
+                  <h6>Cycle existant</h6>
+                  <p class="text-muted mb-0">Ajouter cette facture à un cycle déjà existant</p>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="cycle-option" onclick="selectCycleOption('new')">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="cycle_option" 
+                       id="new_cycle" value="new">
+                <label class="form-check-label" for="new_cycle">
+                  <h6>Nouveau cycle</h6>
+                  <p class="text-muted mb-0">Créer un nouveau cycle pour cette facture</p>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cycle existant -->
+        <div id="existing_cycle_section">
+          <label class="form-label">Sélectionner un cycle existant</label>
+          {% if cycles %}
+          <select name="cycle_id" class="form-select" required>
+            <option value="">Choisir un cycle...</option>
+            {% for cycle in cycles %}
+            <option value="{{ cycle.cycle_id }}">
+              {{ cycle.cycle_id }} - {{ cycle.date_debut_cycle.strftime('%d/%m/%Y') }} 
+              {% if cycle.statut_cycle == 'TERMINE' %}(Terminé){% endif %}
+            </option>
+            {% endfor %}
+          </select>
+          {% else %}
+          <div class="alert alert-info">
+            <i class="ri-information-line me-2"></i>
+            Aucun cycle existant. Vous devez créer un nouveau cycle.
+          </div>
+          <script>
+            document.getElementById('new_cycle').checked = true;
+            document.getElementById('new_cycle').dispatchEvent(new Event('change'));
+          </script>
+          {% endif %}
+        </div>
+
+        <!-- Nouveau cycle -->
+        <div id="new_cycle_section" style="display: none;">
+          <div class="alert alert-success">
+            <i class="ri-add-circle-line me-2"></i>
+            Un nouveau cycle sera automatiquement créé avec un identifiant unique.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Facture -->
+      <div class="form-section">
+        <h5 class="mb-4">
+          <i class="ri-file-text-line me-2"></i>Informations de la Facture
+        </h5>
+        
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Date de la facture *</label>
+            <input type="date" name="date_facture" class="form-control" required>
+            <div class="invalid-feedback">
+              Veuillez sélectionner une date.
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Statut</label>
+            <input type="text" class="form-control" value="EN_COURS" readonly>
+            <small class="text-muted">Les nouvelles factures sont toujours en cours</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="d-flex gap-2 justify-content-end">
+        <a href="{{ url_for('facturation_patient', patient_id=patient.id) }}" class="btn btn-outline-secondary">
+          <i class="ri-arrow-left-line me-1"></i>Annuler
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <i class="ri-file-add-line me-1"></i>Créer la facture
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function selectCycleOption(option) {
+  // Update visual selection
+  document.querySelectorAll('.cycle-option').forEach(el => {
+    el.classList.remove('selected');
+  });
+  event.currentTarget.classList.add('selected');
+  
+  // Show/hide sections
+  if (option === 'existing') {
+    document.getElementById('existing_cycle_section').style.display = 'block';
+    document.getElementById('new_cycle_section').style.display = 'none';
+    document.querySelector('select[name="cycle_id"]').required = true;
+  } else {
+    document.getElementById('existing_cycle_section').style.display = 'none';
+    document.getElementById('new_cycle_section').style.display = 'block';
+    document.querySelector('select[name="cycle_id"]').required = false;
+  }
+}
+
+// Form validation
+(function() {
+  'use strict';
+  var forms = document.querySelectorAll('.needs-validation');
+  Array.prototype.slice.call(forms).forEach(function(form) {
+    form.addEventListener('submit', function(event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    }, false);
+  });
+})();
+
+// Set default date to today
+document.addEventListener('DOMContentLoaded', function() {
+  const dateInput = document.querySelector('input[name="date_facture"]');
+  if (dateInput) {
+    dateInput.valueAsDate = new Date();
+  }
+});
+</script>
+
+{% endblock %}

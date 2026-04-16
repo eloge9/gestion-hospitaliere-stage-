@@ -101,3 +101,36 @@ CREATE TABLE medicament (
 
   FOREIGN KEY (categorie_id) REFERENCES categorie_medicament(id)
 );
+
+CREATE TABLE facture (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  patient_id INT NOT NULL,
+  -- identifie un cycle (suivi complet)
+  cycle_id VARCHAR(50) NOT NULL,
+  date_facture DATE NOT NULL,
+  -- dates du suivi global (répétées mais utiles)
+  date_debut_cycle DATE DEFAULT NULL,
+  date_fin_cycle DATE DEFAULT NULL,
+  total_general DECIMAL(10,2) DEFAULT 0,
+  base_remboursement DECIMAL(10,2) DEFAULT 0,
+  montant_assurance DECIMAL(10,2) DEFAULT 0,
+  montant_patient DECIMAL(10,2) DEFAULT 0,
+  statut ENUM('EN_COURS','TERMINE') DEFAULT 'EN_COURS',
+  date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (patient_id) REFERENCES patient(id)
+);
+
+CREATE TABLE facture_detail (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  facture_id INT NOT NULL,
+  designation VARCHAR(255) NOT NULL,
+  quantite INT DEFAULT 1,
+  prix_unitaire DECIMAL(10,2) NOT NULL,
+  montant DECIMAL(10,2) GENERATED ALWAYS AS (quantite * prix_unitaire) STORED,
+  FOREIGN KEY (facture_id) REFERENCES facture(id) ON DELETE CASCADE
+);
+ALTER TABLE facture_detail
+ADD medicament_id INT NULL;
+ALTER TABLE facture_detail
+ADD CONSTRAINT fk_facture_medicament
+FOREIGN KEY (medicament_id) REFERENCES medicament(id);

@@ -1,0 +1,339 @@
+{% extends "admin/base_admin.html" %}
+{% block content %}
+
+<style>
+  .form-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .patient-info {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+  }
+
+  .medicament-card {
+    transition: all 0.3s ease;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+  }
+
+  .medicament-card:hover {
+    border-color: #667eea;
+    background-color: rgba(102, 126, 234, 0.05);
+    transform: translateY(-2px);
+  }
+
+  .medicament-card.selected {
+    border-color: #667eea;
+    background-color: rgba(102, 126, 234, 0.1);
+  }
+
+  .stock-low {
+    border-color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.05);
+  }
+
+  .stock-ok {
+    border-color: #28a745;
+  }
+
+  .prescription-item {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid #667eea;
+  }
+</style>
+
+<div class="app-container">
+  <div class="app-hero-header d-flex align-items-center">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+        <a href="{{ url_for('index') }}">Admin</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('liste_patient_admin') }}">Liste des Patients</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('admin_gestion_patient', patient_id=patient.id) }}">Gestion Patient</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('facturation_patient', patient_id=patient.id) }}">Facturation</a>
+      </li>
+      <li class="breadcrumb-item text-primary" aria-current="page">
+        Nouvelle Facture
+      </li>
+    </ol>
+  </div>
+
+  <div class="app-body">
+    <!-- Infos patient -->
+    <div class="patient-info mb-4">
+      <div class="d-flex align-items-center">
+        <div
+          class="avatar-lg bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center me-3">
+          <i class="ri-user-3-line text-white fs-2"></i>
+        </div>
+        <div>
+          <h4 class="mb-1">{{ patient.nom }} {{ patient.prenom }}</h4>
+          <p class="mb-0">ID: #{{ patient.id }} | Créer une nouvelle facture et prescription</p>
+        </div>
+      </div>
+    </div>
+
+    <form method="POST" class="needs-validation" novalidate>
+      <!-- Section Facture -->
+      <div class="form-section">
+        <h5 class="mb-4">
+          <i class="ri-file-text-line me-2"></i>Informations de la Facture
+        </h5>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Date de la facture *</label>
+            <input type="date" name="date_facture" class="form-control" required>
+            <div class="invalid-feedback">
+              Veuillez sélectionner une date.
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Statut</label>
+            <input type="text" class="form-control" value="EN_COURS" readonly>
+            <small class="text-muted">Les nouvelles factures sont toujours en cours</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Prescription Médicaments -->
+      <div class="form-section">
+        <h5 class="mb-4">
+          <i class="ri-capsule-line me-2"></i>Prescription des Médicaments
+        </h5>
+
+        <div class="row">
+          {% for medicament in medicaments %}
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="medicament-card {{ 'stock-low' if medicament.quantite_stock < 10 else 'stock-ok' }}"
+              onclick="toggleMedicament({{ medicament.id }}, '{{ medicament.nom }}', {{ medicament.prix_unitaire }}, {{ medicament.quantite_stock }})">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <h6 class="mb-1">{{ medicament.nom }}</h6>
+                  <small class="text-muted">{{ medicament.description or 'Aucune description' }}</small>
+                </div>
+                <div class="text-end">
+                  <div class="badge {{ 'bg-danger' if medicament.quantite_stock < 10 else 'bg-success' }}">
+                    Stock: {{ medicament.quantite_stock }}
+                  </div>
+                  <div class="text-muted small">{{ "{:,.0f}".format(medicament.prix_unitaire) }} FCFA</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Médicaments sélectionnés -->
+        <div id="prescription_list" class="mt-4" style="display: none;">
+          <h6 class="mb-3">
+            <i class="ri-shopping-cart-line me-2"></i>Médicaments à prescrire:
+          </h6>
+          <div id="prescription_items"></div>
+        </div>
+
+        <!-- Services additionnels -->
+        <div class="mt-4">
+          <h6 class="mb-3">
+            <i class="ri-service-line me-2"></i>Services additionnels:
+          </h6>
+          <div id="services_list"></div>
+          <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addService()">
+            <i class="ri-add-line me-1"></i>Ajouter un service
+          </button>
+        </div>
+      </div>
+
+      <!-- Champs cachés pour les médicaments et services -->
+      <div id="hidden_fields"></div>
+
+      <!-- Actions -->
+      <div class="d-flex gap-2 justify-content-end">
+        <a href="{{ url_for('facturation_patient', patient_id=patient.id) }}" class="btn btn-outline-secondary">
+          <i class="ri-arrow-left-line me-1"></i>Annuler
+        </a>
+        <button type="submit" class="btn btn-primary" onclick="prepareFormData()">
+          <i class="ri-file-add-line me-1"></i>Créer la facture
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  let selectedMedicaments = [];
+  let serviceCounter = 0;
+
+  function toggleMedicament(id, nom, prix, stock) {
+    const index = selectedMedicaments.findIndex(m => m.id === id);
+
+    if (index === -1) {
+      // Ajouter le médicament
+      selectedMedicaments.push({
+        id: id,
+        nom: nom,
+        prix: prix,
+        quantite: 1,
+        stock: stock
+      });
+    } else {
+      // Retirer le médicament
+      selectedMedicaments.splice(index, 1);
+    }
+
+    updatePrescriptionList();
+    updateMedicamentCards();
+  }
+
+  function updateMedicamentCards() {
+    document.querySelectorAll('.medicament-card').forEach(card => {
+      card.classList.remove('selected');
+    });
+
+    selectedMedicaments.forEach(med => {
+      const card = document.querySelector(`[onclick*="toggleMedicament(${med.id}"]`);
+      if (card) {
+        card.classList.add('selected');
+      }
+    });
+  }
+
+  function updatePrescriptionList() {
+    const container = document.getElementById('prescription_items');
+    const listSection = document.getElementById('prescription_list');
+
+    if (selectedMedicaments.length === 0) {
+      listSection.style.display = 'none';
+      return;
+    }
+
+    listSection.style.display = 'block';
+    container.innerHTML = '';
+
+    selectedMedicaments.forEach((med, index) => {
+      const item = document.createElement('div');
+      item.className = 'prescription-item';
+      item.innerHTML = `
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <strong>${med.nom}</strong>
+          <small class="text-muted d-block">${med.prix.toFixed(0)} FCFA × ${med.quantite} = ${(med.prix * med.quantite).toFixed(0)} FCFA</small>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <div class="input-group input-group-sm" style="width: 120px;">
+            <input type="number" class="form-control" value="${med.quantite}" 
+                   min="1" max="${med.stock}" onchange="updateQuantite(${index}, this.value)">
+            <span class="input-group-text">/${med.stock}</span>
+          </div>
+          <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMedicament(${index})">
+            <i class="ri-delete-bin-line"></i>
+          </button>
+        </div>
+      </div>
+    `;
+      container.appendChild(item);
+    });
+  }
+
+  function updateQuantite(index, quantite) {
+    const q = parseInt(quantite);
+    if (q > 0 && q <= selectedMedicaments[index].stock) {
+      selectedMedicaments[index].quantite = q;
+      updatePrescriptionList();
+    }
+  }
+
+  function removeMedicament(index) {
+    selectedMedicaments.splice(index, 1);
+    updatePrescriptionList();
+    updateMedicamentCards();
+  }
+
+  function addService() {
+    const container = document.getElementById('services_list');
+    const id = `service_${serviceCounter++}`;
+
+    const service = document.createElement('div');
+    service.className = 'prescription-item';
+    service.id = id;
+    service.innerHTML = `
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="flex-grow-1 me-3">
+        <input type="text" class="form-control form-control-sm mb-2" 
+               placeholder="Désignation du service" name="service_designation_${id}">
+        <div class="d-flex gap-2">
+          <input type="number" class="form-control form-control-sm" 
+                 placeholder="Quantité" name="service_quantite_${id}" value="1" min="1">
+          <input type="number" class="form-control form-control-sm" 
+                 placeholder="Prix unitaire" name="service_prix_${id}" min="0" step="0.01">
+        </div>
+      </div>
+      <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeService('${id}')">
+        <i class="ri-delete-bin-line"></i>
+      </button>
+    </div>
+  `;
+    container.appendChild(service);
+  }
+
+  function removeService(id) {
+    document.getElementById(id).remove();
+  }
+
+  // Form validation
+  (function () {
+    'use strict';
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+
+  function prepareFormData() {
+    const hiddenFields = document.getElementById('hidden_fields');
+    hiddenFields.innerHTML = '';
+
+    // Ajouter les médicaments sélectionnés
+    selectedMedicaments.forEach(med => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'medicaments';
+      input.value = `${med.id}|${med.quantite}|${med.prix}`;
+      hiddenFields.appendChild(input);
+    });
+  }
+
+  // Set default date to today
+  document.addEventListener('DOMContentLoaded', function () {
+    const dateInput = document.querySelector('input[name="date_facture"]');
+    if (dateInput) {
+      dateInput.valueAsDate = new Date();
+    }
+  });
+</script>
+
+{% endblock %}
