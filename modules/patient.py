@@ -145,6 +145,38 @@ def init_patient(app, mysql, mail):
 
     # ===== ROUTES ADMIN POUR LA GESTION DES PATIENTS =====
     
+    @app.route("/admin/patient/<int:patient_id>/gestion")
+    @login_required("admin")
+    def admin_gestion_patient(patient_id):
+        """Page de gestion du patient avec actions multiples"""
+        if 'email_admin' in session:
+            loggedIn, firstName = getLogin('email_admin', 'admin', mysql)
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            
+            # Récupérer les infos du patient
+            cursor.execute("SELECT * FROM patient WHERE id = %s", (patient_id,))
+            patient = cursor.fetchone()
+            
+            if not patient:
+                flash("Patient non trouvé.", "danger")
+                return redirect(url_for('liste_patient_admin'))
+            
+            # Récupérer les personnes à prévenir
+            cursor.execute("SELECT * FROM personne_prevenir WHERE patient_id = %s", (patient_id,))
+            personnes_a_prevenir = cursor.fetchall()
+            
+            # Récupérer les assurances
+            cursor.execute("SELECT * FROM assurance WHERE patient_id = %s", (patient_id,))
+            assurances = cursor.fetchall()
+            
+            return render_template('admin/gestion_patient/gestion_patient.html',
+                             patient=patient, 
+                             personnes_a_prevenir=personnes_a_prevenir,
+                             assurances=assurances,
+                             loggedIn=loggedIn, firstName=firstName)
+        else:
+            return redirect(url_for('login'))
+
     @app.route("/admin/patient/<int:patient_id>")
     @login_required("admin")
     def admin_voir_patient(patient_id):

@@ -1,0 +1,239 @@
+{% extends "admin/base_admin.html" %}
+{% block content %}
+
+<style>
+  .action-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .action-card .card-body {
+    color: white;
+  }
+
+  .action-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .patient-info-card {
+    border-left: 4px solid #667eea;
+  }
+
+  .badge-custom {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+  }
+</style>
+
+<div class="app-container">
+  <div class="app-hero-header d-flex align-items-center">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+        <a href="{{ url_for('index') }}">Admin</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('liste_patient_admin') }}">Liste des Patients</a>
+      </li>
+      <li class="breadcrumb-item text-primary" aria-current="page">
+        Gestion du Patient
+      </li>
+    </ol>
+  </div>
+
+  <div class="app-body">
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-3"
+      role="alert">
+      <i class="ri-error-warning-line me-2"></i>{{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %} {% endif %} {% endwith %}
+
+    <!-- Informations du patient -->
+    <div class="card patient-info-card mb-4">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center">
+            <div
+              class="avatar-lg bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3">
+              <i class="ri-user-3-line text-primary fs-2"></i>
+            </div>
+            <div>
+              <h4 class="mb-1">{{ patient.nom }} {{ patient.prenom }}</h4>
+              <p class="text-muted mb-0">ID: #{{ patient.id }}</p>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <span class="badge bg-primary-subtle text-primary badge-custom">
+              <i class="ri-men-line me-1"></i>{{ patient.sexe }}
+            </span>
+            <span class="badge bg-info-subtle text-info badge-custom">
+              <i class="ri-phone-line me-1"></i>{{ patient.numero_telephone }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="row mb-4">
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card action-card h-100"
+          onclick="window.location.href='{{ url_for('admin_voir_patient', patient_id=patient.id) }}'; return false;">
+          <div class="card-body text-center">
+            <i class="ri-file-text-line action-icon"></i>
+            <h5 class="card-title">Dossier Médical</h5>
+            <p class="card-text small">Voir le dossier médical complet</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card action-card h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+          <div class="card-body text-center">
+            <i class="ri-file-list-3-line action-icon"></i>
+            <h5 class="card-title">Facturation</h5>
+            <p class="card-text small">Gérer les factures et paiements</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card action-card h-100" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+          <div class="card-body text-center">
+            <i class="ri-capsule-line action-icon"></i>
+            <h5 class="card-title">Pharmacie</h5>
+            <p class="card-text small">Prescriptions et médicaments</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card action-card h-100" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+          <div class="card-body text-center">
+            <i class="ri-calendar-check-line action-icon"></i>
+            <h5 class="card-title">Rendez-vous</h5>
+            <p class="card-text small">Gérer les rendez-vous</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Informations détaillées -->
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title">
+              <i class="ri-user-line me-2"></i>Informations personnelles
+            </h5>
+          </div>
+          <div class="card-body">
+            <table class="table table-borderless">
+              <tr>
+                <td><strong>Email:</strong></td>
+                <td>{{ patient.email_patient }}</td>
+              </tr>
+              <tr>
+                <td><strong>Date de naissance:</strong></td>
+                <td>{{ patient.date_naissance.strftime('%d/%m/%Y') if patient.date_naissance else '-' }}</td>
+              </tr>
+              <tr>
+                <td><strong>Profession:</strong></td>
+                <td>{{ patient.profession or '-' }}</td>
+              </tr>
+              <tr>
+                <td><strong>Ville:</strong></td>
+                <td>{{ patient.ville or '-' }}</td>
+              </tr>
+              <tr>
+                <td><strong>Adresse:</strong></td>
+                <td>{{ patient.adresse or '-' }}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title">
+              <i class="ri-user-heart-line me-2"></i>Personnes à prévenir
+              <span class="badge bg-primary-light text-primary ms-2">{{ personnes_a_prevenir|length }}</span>
+            </h5>
+          </div>
+          <div class="card-body">
+            {% if personnes_a_prevenir %}
+            {% for personne in personnes_a_prevenir[:3] %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div>
+                <strong>{{ personne.nom }} {{ personne.prenom }}</strong>
+                <br><small class="text-muted">{{ personne.type_personne }} - {{ personne.telephone }}</small>
+              </div>
+            </div>
+            {% endfor %}
+            {% if personnes_a_prevenir|length > 3 %}
+            <small class="text-muted">...et {{ personnes_a_prevenir|length - 3 }} autre(s)</small>
+            {% endif %}
+            {% else %}
+            <p class="text-muted">Aucune personne à prévenir enregistrée</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="d-flex gap-2 justify-content-end">
+      <a href="{{ url_for('liste_patient_admin') }}" class="btn btn-outline-secondary">
+        <i class="ri-arrow-left-line me-1"></i>Retour à la liste
+      </a>
+      <a href="{{ url_for('admin_modifier_patient', patient_id=patient.id) }}" class="btn btn-primary">
+        <i class="ri-edit-line me-1"></i>Modifier le Patient
+      </a>
+      <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalDelete"
+        data-id="{{ patient.id }}" onclick="updateDeleteLinkPatient(this)">
+        <i class="ri-delete-bin-line me-1"></i>Supprimer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal suppression -->
+<div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalDeleteLabel">Confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir supprimer ce patient ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+        <a href="#" id="confirmDeleteBtn" class="btn btn-danger">Oui</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function updateDeleteLinkPatient(button) {
+    const patientId = button.getAttribute('data-id');
+    document.getElementById('confirmDeleteBtn').href = `/admin/patients/supprimer/${patientId}`;
+  }
+</script>
+
+{% endblock %}

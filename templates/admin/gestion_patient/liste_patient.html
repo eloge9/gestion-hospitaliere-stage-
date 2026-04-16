@@ -1,4 +1,17 @@
 {% extends "admin/base_admin.html" %} {% block content %}
+<style>
+  .patient-row {
+    transition: background-color 0.2s ease;
+  }
+
+  .patient-row:hover {
+    background-color: rgba(13, 110, 253, 0.05) !important;
+  }
+
+  .patient-row:active {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+  }
+</style>
 <div class="app-container">
   <div class="app-hero-header d-flex align-items-center">
     <ol class="breadcrumb">
@@ -37,7 +50,9 @@
           </thead>
           <tbody>
             {% for patient in patients %}
-            <tr>
+            <tr class="patient-row"
+              onclick="window.location.href='{{ url_for('admin_gestion_patient', patient_id=patient.id) }}'; return false;"
+              style="cursor: pointer;">
               <td>#{{ patient.id }}</td>
               <td>
                 <i class="ri-heart-pulse-line text-primary me-2"></i>
@@ -64,7 +79,7 @@
                 patient.date_inscription else "—" }}
               </td>
               <td>
-                <div class="d-inline-flex gap-1">
+                <div class="d-inline-flex gap-1" onclick="event.stopPropagation()">
                   <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDelete"
                     data-id="{{ patient.id }}" onclick="updateDeleteLinkPatient(this)">
                     <i class="ri-delete-bin-line"></i>
