@@ -22,8 +22,7 @@
         <!-- Flash messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %} {% for category, message in messages %}
-        <div
-          class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-3"
+        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-3"
           role="alert">
           <i class="ri-error-warning-line me-2"></i>{{ message }}
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -119,39 +118,39 @@
           </div>
           <div class="card-body">
             {% if personnes_a_prevenir %}
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead class="table-light">
-                    <tr>
-                      <th>Nom</th>
-                      <th>Prénom</th>
-                      <th>Profession</th>
-                      <th>Téléphone</th>
-                      <th>Type</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for personne in personnes_a_prevenir %}
-                    <tr>
-                      <td>{{ personne.nom }}</td>
-                      <td>{{ personne.prenom }}</td>
-                      <td>{{ personne.profession or '-' }}</td>
-                      <td>{{ personne.telephone }}</td>
-                      <td>
-                        <span class="badge bg-info-light text-info">
-                          {{ personne.type_personne }}
-                        </span>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Profession</th>
+                    <th>Téléphone</th>
+                    <th>Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for personne in personnes_a_prevenir %}
+                  <tr>
+                    <td>{{ personne.nom }}</td>
+                    <td>{{ personne.prenom }}</td>
+                    <td>{{ personne.profession or '-' }}</td>
+                    <td>{{ personne.telephone }}</td>
+                    <td>
+                      <span class="badge bg-info-light text-info">
+                        {{ personne.type_personne }}
+                      </span>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
             {% else %}
-              <div class="text-center py-3">
-                <i class="ri-user-heart-line text-muted" style="font-size: 2rem;"></i>
-                <p class="text-muted mt-2">Aucune personne à prévenir enregistrée</p>
-              </div>
+            <div class="text-center py-3">
+              <i class="ri-user-heart-line text-muted" style="font-size: 2rem;"></i>
+              <p class="text-muted mt-2">Aucune personne à prévenir enregistrée</p>
+            </div>
             {% endif %}
           </div>
         </div>
@@ -166,43 +165,43 @@
           </div>
           <div class="card-body">
             {% if assurances %}
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead class="table-light">
-                    <tr>
-                      <th>Type d'assurance</th>
-                      <th>Numéro d'assurance</th>
-                      <th>Pourcentage</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for assurance in assurances %}
-                    <tr>
-                      <td>
-                        <span class="badge bg-warning-light text-warning">
-                          {{ assurance.type_assurance }}
-                        </span>
-                      </td>
-                      <td>{{ assurance.numero_assurance }}</td>
-                      <td>
-                        {% if assurance.pourcentage %}
-                          <span class="badge bg-success-light text-success">
-                            {{ "%.1f"|format(assurance.pourcentage) }}%
-                          </span>
-                        {% else %}
-                          -
-                        {% endif %}
-                      </td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Type d'assurance</th>
+                    <th>Numéro d'assurance</th>
+                    <th>Pourcentage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for assurance in assurances %}
+                  <tr>
+                    <td>
+                      <span class="badge bg-warning-light text-warning">
+                        {{ assurance.type_assurance }}
+                      </span>
+                    </td>
+                    <td>{{ assurance.numero_assurance }}</td>
+                    <td>
+                      {% if assurance.pourcentage %}
+                      <span class="badge bg-success-light text-success">
+                        {{ "%.1f"|format(assurance.pourcentage) }}%
+                      </span>
+                      {% else %}
+                      -
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
             {% else %}
-              <div class="text-center py-3">
-                <i class="ri-shield-check-line text-muted" style="font-size: 2rem;"></i>
-                <p class="text-muted mt-2">Aucune assurance enregistrée</p>
-              </div>
+            <div class="text-center py-3">
+              <i class="ri-shield-check-line text-muted" style="font-size: 2rem;"></i>
+              <p class="text-muted mt-2">Aucune assurance enregistrée</p>
+            </div>
             {% endif %}
           </div>
         </div>

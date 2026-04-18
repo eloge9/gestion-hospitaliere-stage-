@@ -200,15 +200,72 @@
             <i class="ri-money-dollar-circle-line me-2"></i>Paiement
           </h6>
 
-          <!-- Informations assurance -->
-          {% if assurance_info %}
-          <div class="alert alert-info mb-3">
-            <strong>Assurance détectée:</strong> {{ assurance_info.type_assurance }} ({{ assurance_info.pourcentage }}%)
-            <div class="assurance-badge mt-2">
-              L'assurance prendra en charge {{ assurance_info.pourcentage }}% des frais
+          <!-- Section Multi-Assurance -->
+          <div class="mb-4">
+            <h6 class="mb-3">
+              <i class="ri-shield-check-line me-2"></i>Gestion des Assurances
+            </h6>
+
+            <div id="assurancesContainer">
+              {% if assurances %}
+              {% for assurance in assurances %}
+              <div class="assurance-item card mb-2" data-assurance-id="{{ assurance.id }}">
+                <div class="card-body p-3">
+                  <div class="row align-items-center">
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input class="form-check-input assurance-checkbox" type="checkbox"
+                          id="assurance_{{ assurance.id }}" value="{{ assurance.id }}"
+                          data-type="{{ assurance.type_assurance }}" data-pourcentage="{{ assurance.pourcentage }}">
+                        <label class="form-check-label" for="assurance_{{ assurance.id }}">
+                          <strong>{{ assurance.type_assurance }}</strong>
+                          <br><small class="text-muted">{{ assurance.numero_assurance }}</small>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label small">Pourcentage à appliquer</label>
+                      <input type="number" class="form-control form-sm assurance-pourcentage"
+                        id="pourcentage_{{ assurance.id }}" value="{{ assurance.pourcentage }}" min="0" max="100"
+                        step="0.1" disabled>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label small">Montant couvert</label>
+                      <div class="assurance-montant text fw-bold" id="montant_{{ assurance.id }}">0 FCFA</div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="assurance-statut text-center" id="statut_{{ assurance.id }}">
+                        <span class="badge bg-secondary">Non sélectionnée</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+              {% else %}
+              <div class="alert alert-warning">
+                <i class="ri-information-line me-2"></i>
+                Ce patient n'a aucune assurance enregistrée.
+                <a href="{{ url_for('admin_modifier_patient', patient_id=patient.id) }}" class="alert-link">Ajouter une
+                  assurance</a>
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Résumé des assurances sélectionnées -->
+            <div id="resumeAssurances" class="mt-3" style="display: none;">
+              <div class="card bg-light">
+                <div class="card-body p-3">
+                  <h6 class="mb-2">Résumé des assurances</h6>
+                  <div id="assurancesSelectionnees"></div>
+                  <div class="mt-2">
+                    <strong>Total couvert par assurances:</strong>
+                    <span id="totalAssurances" class="text-success fw-bold">0 FCFA</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          {% endif %}
 
           <div class="row">
             <div class="col-md-4 mb-3">
@@ -287,6 +344,7 @@
 <script>
   let selectedMedicaments = [];
   let selectedServices = [];
+  let selectedAssurances = [];
   let totalGeneral = 0;
 
   function toggleMedicament(id, nom, prix, stock) {
@@ -412,6 +470,78 @@
     updateResumeFinancier();
   }
 
+  function toggleAssurance(checkbox) {
+    const assuranceId = checkbox.value;
+    const assuranceType = checkbox.dataset.type;
+    const pourcentageInput = document.getElementById('pourcentage_' + assuranceId);
+    const montantElement = document.getElementById('montant_' + assuranceId);
+    const statutElement = document.getElementById('statut_' + assuranceId);
+
+    if (checkbox.checked) {
+      pourcentageInput.disabled = false;
+      selectedAssurances.push({
+        id: assuranceId,
+        type: assuranceType,
+        pourcentage: parseFloat(pourcentageInput.value)
+      });
+      statutElement.innerHTML = '<span class="badge bg-success">Sélectionnée</span>';
+    } else {
+      pourcentageInput.disabled = true;
+      selectedAssurances = selectedAssurances.filter(a => a.id !== assuranceId);
+      statutElement.innerHTML = '<span class="badge bg-secondary">Non sélectionnée</span>';
+      montantElement.textContent = '0 FCFA';
+    }
+
+    updateAssurancesResume();
+    updateResumeFinancier();
+  }
+
+  function updateAssurancePourcentage(assuranceId) {
+    const pourcentage = parseFloat(document.getElementById('pourcentage_' + assuranceId).value);
+    const assurance = selectedAssurances.find(a => a.id === assuranceId);
+    if (assurance) {
+      assurance.pourcentage = pourcentage;
+    }
+    updateAssurancesResume();
+    updateResumeFinancier();
+  }
+
+  function updateAssurancesResume() {
+    const resumeContainer = document.getElementById('resumeAssurances');
+    const assurancesSelectionnees = document.getElementById('assurancesSelectionnees');
+    const totalAssurancesElement = document.getElementById('totalAssurances');
+
+    if (selectedAssurances.length === 0) {
+      resumeContainer.style.display = 'none';
+      return;
+    }
+
+    resumeContainer.style.display = 'block';
+    assurancesSelectionnees.innerHTML = '';
+
+    let totalCouvert = 0;
+
+    selectedAssurances.forEach(assurance => {
+      const montantCouvert = totalGeneral * (assurance.pourcentage / 100);
+      totalCouvert += montantCouvert;
+
+      // Mettre à jour le montant pour cette assurance
+      const montantElement = document.getElementById('montant_' + assurance.id);
+      if (montantElement) {
+        montantElement.textContent = montantCouvert.toFixed(0) + ' FCFA';
+      }
+
+      assurancesSelectionnees.innerHTML += `
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span>${assurance.type}: ${assurance.pourcentage}%</span>
+          <span class="badge bg-primary">${montantCouvert.toFixed(0)} FCFA</span>
+        </div>
+      `;
+    });
+
+    totalAssurancesElement.textContent = totalCouvert.toFixed(0) + ' FCFA';
+  }
+
   function updateResumeFinancier() {
     // Calculer le total général
     totalGeneral = 0;
@@ -422,19 +552,23 @@
       totalGeneral += service.prix * service.quantite;
     });
 
-    // Calculer les montants avec assurance
-    let montantAssurance = 0;
+    // Calculer les montants avec assurances multiples
+    let montantAssuranceTotal = 0;
     let montantPatient = totalGeneral;
 
-    {% if assurance_info %}
-    const pourcentageAssurance = parseFloat('{{ assurance_info.pourcentage }}');
-    montantAssurance = totalGeneral * (pourcentageAssurance / 100);
-    montantPatient = totalGeneral - montantAssurance;
-    {% endif %}
+    if (selectedAssurances.length > 0) {
+      selectedAssurances.forEach(assurance => {
+        const montantCouvert = totalGeneral * (assurance.pourcentage / 100);
+        montantAssuranceTotal += montantCouvert;
+      });
+      // Limiter le total des assurances à ne pas dépasser le montant total
+      montantAssuranceTotal = Math.min(montantAssuranceTotal, totalGeneral);
+      montantPatient = totalGeneral - montantAssuranceTotal;
+    }
 
     // Mettre à jour l'affichage
     document.getElementById('totalGeneral').textContent = totalGeneral.toFixed(0) + ' FCFA';
-    document.getElementById('montantAssurance').textContent = montantAssurance.toFixed(0) + ' FCFA';
+    document.getElementById('montantAssurance').textContent = montantAssuranceTotal.toFixed(0) + ' FCFA';
     document.getElementById('montantPatient').textContent = montantPatient.toFixed(0) + ' FCFA';
 
     // Calculer le reste à payer
@@ -464,10 +598,34 @@
       input.value = `${service.designation}|${service.quantite}|${service.prix}`;
       hiddenFields.appendChild(input);
     });
+
+    // Ajouter les assurances sélectionnées
+    selectedAssurances.forEach(assurance => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'assurances';
+      input.value = `${assurance.id}|${assurance.pourcentage}`;
+      hiddenFields.appendChild(input);
+    });
   }
 
   // Écouter les changements de montant de paiement
   document.getElementById('montantPaiement').addEventListener('input', updateResumeFinancier);
+
+  // Écouter les changements sur les assurances
+  document.querySelectorAll('.assurance-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', function () {
+      toggleAssurance(this);
+    });
+  });
+
+  // Écouter les changements de pourcentage d'assurance
+  document.querySelectorAll('.assurance-pourcentage').forEach(input => {
+    input.addEventListener('input', function () {
+      const assuranceId = this.id.replace('pourcentage_', '');
+      updateAssurancePourcentage(assuranceId);
+    });
+  });
 
   // Préparer les données avant la soumission
   document.getElementById('factureForm').addEventListener('submit', function (e) {

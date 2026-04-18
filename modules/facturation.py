@@ -395,6 +395,7 @@ def init_facturation(app, mysql):
                     # Récupérer les données du formulaire
                     services = request.form.getlist('services')
                     medicaments = request.form.getlist('medicaments')
+                    assurances = request.form.getlist('assurances')
                     
                     # Données de paiement
                     montant_paiement = float(request.form.get('montant_paiement', 0))
@@ -470,21 +471,38 @@ def init_facturation(app, mysql):
                         
                         total_general += quantite * prix_unitaire
                     
-                    # Calculer les montants avec assurance automatique
-                    # Vérifier si le patient a une assurance
-                    cursor.execute("""
-                        SELECT type_assurance, pourcentage FROM assurance 
-                        WHERE patient_id = %s
-                    """, (patient_id,))
-                    assurance_info = cursor.fetchone()
+                    # Calculer les montants avec assurances multiples
+                    montant_assurance_total = 0
+                    montant_patient = total_general
                     
-                    if assurance_info and assurance_info['pourcentage']:
-                        pourcentage_assurance = float(assurance_info['pourcentage'])
-                        montant_assurance = total_general * (pourcentage_assurance / 100)
-                        montant_patient = total_general - montant_assurance
-                    else:
-                        montant_assurance = 0
-                        montant_patient = total_general
+                    if assurances:
+                        # Traiter les assurances sélectionnées
+                        for assurance_data in assurances:
+                            assurance_id, pourcentage_applique = assurance_data.split('|')
+                            assurance_id = int(assurance_id)
+                            pourcentage_applique = float(pourcentage_applique)
+                            
+                            # Récupérer les infos de l'assurance
+                            cursor.execute("""
+                                SELECT type_assurance, numero_assurance FROM assurance 
+                                WHERE id = %s AND patient_id = %s
+                            """, (assurance_id, patient_id))
+                            assurance_info = cursor.fetchone()
+                            
+                            if assurance_info:
+                                montant_couvert = total_general * (pourcentage_applique / 100)
+                                montant_assurance_total += montant_couvert
+                                
+                                # Ajouter la liaison facture-assurance
+                                cursor.execute("""
+                                    INSERT INTO facture_assurance 
+                                    (facture_id, assurance_id, pourcentage_applique, montant_couvert)
+                                    VALUES (%s, %s, %s, %s)
+                                """, (facture_id, assurance_id, pourcentage_applique, montant_couvert))
+                    
+                    # Limiter le total des assurances à ne pas dépasser le montant total
+                    montant_assurance_total = min(montant_assurance_total, total_general)
+                    montant_patient = total_general - montant_assurance_total
                     
                     # Mettre à jour la facture avec les montants calculés
                     cursor.execute("""
@@ -493,7 +511,7 @@ def init_facturation(app, mysql):
                             montant_assurance = %s, montant_patient = %s,
                             montant_total = %s
                         WHERE id = %s
-                    """, (total_general, total_general, montant_assurance, montant_patient, total_general, facture_id))
+                    """, (total_general, total_general, montant_assurance_total, montant_patient, total_general, facture_id))
                     
                     # Ajouter le paiement si montant > 0
                     if montant_paiement > 0:
@@ -535,8 +553,8 @@ def init_facturation(app, mysql):
                     
                     # Message de succès avec détails
                     message = f"Facture créée avec succès! Total: {total_general:.0f} FCFA"
-                    if assurance_info:
-                        message += f" | Assurance: {montant_assurance:.0f} FCFA ({pourcentage_assurance}%)"
+                    if assurances and len(assurances) > 0:
+                        message += f" | Assurances: {montant_assurance_total:.0f} FCFA ({len(assurances)} assurance(s))"
                     if montant_paiement > 0:
                         message += f" | Payé: {montant_paiement:.0f} FCFA ({mode_paiement})"
                         reste_a_payer = montant_patient - montant_paiement
@@ -555,18 +573,18 @@ def init_facturation(app, mysql):
             cursor.execute("SELECT * FROM medicament ORDER BY nom")
             medicaments = cursor.fetchall()
             
-            # Récupérer les infos d'assurance du patient
+            # Récupérer toutes les assurances du patient
             cursor.execute("""
-                SELECT type_assurance, pourcentage FROM assurance 
+                SELECT * FROM assurance 
                 WHERE patient_id = %s
             """, (patient_id,))
-            assurance_info = cursor.fetchone()
+            assurances = cursor.fetchall()
             
             from datetime import datetime
             return render_template('admin/gestion_patient/ajouter_facture_avec_paiement.html',
                              patient=patient,
                              medicaments=medicaments,
-                             assurance_info=assurance_info,
+                             assurances=assurances,
                              datetime=datetime,
                              loggedIn=loggedIn, firstName=firstName)
         else:
